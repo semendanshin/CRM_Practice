@@ -1,0 +1,10 @@
+label {
+    color: darkred;
+}
+body {
+    background-color: whitesmoke;
+}
+.ticket {
+    background-color: #004d40;
+    z-index: auto;
+}
