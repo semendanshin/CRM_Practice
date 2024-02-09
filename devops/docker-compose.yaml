@@ -1,0 +1,72 @@
+version: "0.1"
+
+services:
+  postgres:
+    image: "postgres:15"
+    container_name: "postgres"
+    shm_size: "128mb"
+    user: "postgres"
+    command:
+      - "postgres"
+      - "-c"
+      - "log_statement=all"
+      - "-c"
+      - 'max_connections=100'
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-d", "postgres", "-U", "postgres" ]
+      interval: "10s"
+      timeout: "2s"
+      retries: 3
+      start_period: "15s"
+    environment:
+      POSTGRES_PASSWORD: "itmo_crm_practice"
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "crm"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "pgdata:/var/lib/postgresql/data:rw"
+    ports:
+      - "5432:5432/tcp"
+    logging: &logging
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: "unless-stopped"
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    hostname: kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - 8090:8080
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    links:
+      - kafka
+      - zookeeper
+
+volumes:
+  pgdata:
