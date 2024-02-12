@@ -14,7 +14,7 @@ app.include_router(index_router)
 app.include_router(auth_router)
 app.include_router(subpage_router)
 
-ui.run(storage_secret=STORAGE_SECRET, show=False)
+ui.run(storage_secret=STORAGE_SECRET, show=False, port=8000)
 
 pprint(core.app.routes)
 

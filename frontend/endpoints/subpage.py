@@ -1,6 +1,6 @@
 from nicegui import ui
 from frontend.styles import SubpageStyle
-from frontend.components import Label
+from frontend.components import BaseLabel
 
 from nicegui import APIRouter
 
@@ -15,7 +15,7 @@ def label_page() -> None:
 
     # ui.label('some text')  # if element shouldn't be styled by tag
 
-    Label('This is a sub page.')  # if element should be styled by tag you should create custom class
+    BaseLabel('This is a sub page.')  # if element should be styled by tag you should create custom class
 
 
 @router.page('/link')
