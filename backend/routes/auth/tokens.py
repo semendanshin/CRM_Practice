@@ -1,35 +1,38 @@
+from typing import Optional, Union
+
 import jwt
 import datetime
-import json
 
-from fastapi.routing import APIRouter
-from fastapi import Depends
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from db.models import Employee, Authorization
-from backend.conf import JWT_SECRET, ACCESS_EXPIRE_DAYS, REFRESH_EXPIRE_DAYS
 
-from .exceptions import EmptyTokenError, InvalidTokenError, ExpiredTokenException
-
-from backend.crud.AuthRepo import AuthRepo
-from backend.crud.EmployeeRepo import EmployeeRepo
-from ..db import get_session
-
-
-class Result:
-    def __init__(self, status, data=None):
-        self.status = status
-        self.data = data
-
-
-router = APIRouter(
-    prefix="/auth",
-    tags=["auth"],
+from schemas.auth import AuthorizationCreate
+from routes.auth.exceptions import (
+    TokenInvalidException,
+    TokenExpiredException,
+    TokenNotFoundException,
+    TokenEmptyException,
 )
+from conf import JWT_SECRET, ACCESS_EXPIRE_DAYS, REFRESH_EXPIRE_DAYS
+from crud import auth_repo, employee_repo
+from db.models import Employee
+
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
-def generate_tokens(employee_id: int, received_tokens: dict[str, str] = None) -> dict[str, str]:
+class Tokens(BaseModel):
+    access: str
+    refresh: str
+
+
+def create_tokens(session: AsyncSession,
+                  employee_id: int,
+                  received_tokens: Optional[Tokens] = None) -> Tokens:
     """
     Generate tokens for user
+    :param session:
     :param employee_id:
     :param received_tokens: by default None
     :return: tokens dict
@@ -38,23 +41,17 @@ def generate_tokens(employee_id: int, received_tokens: dict[str, str] = None) ->
         'refresh': str,
     }
     """
-    if received_tokens is None:
-        received_tokens = {}
 
-    result = check_token(received_tokens=received_tokens)
-    # print(result.status, result.data)
+    try:
+        user = check_token(session, received_tokens=received_tokens)
+    except Union[TokenEmptyException, TokenNotFoundException]:
+        user = employee_repo.get_by_id(session, employee_id)
+    except Union[TokenInvalidException, TokenExpiredException]:
+        user = employee_repo.get_by_id(session, employee_id)
+        await auth_repo.delete_by_user_id(session, user.id)
 
-    if result.status == 'ok':
-        employee_id = result.data
-        user = User.objects.get_or_none(id=user_id)
-
-    user = User.objects.get_or_none(phone=phone)
-
-    if result.data in ['Invalid token', 'Access token expired', 'Refresh token expired'] or result.status == 'ok':
-        Token.objects.get_or_none(user=user).delete()
-
-    tokens = {
-        'access': jwt.encode(
+    tokens = AuthorizationCreate(
+        access=jwt.encode(
             {
                 'user_id': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
@@ -63,7 +60,7 @@ def generate_tokens(employee_id: int, received_tokens: dict[str, str] = None) ->
             key=JWT_SECRET,
             algorithm="HS256",
         ),
-        'refresh': jwt.encode(
+        refresh=jwt.encode(
             {
                 'user_id': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
@@ -72,14 +69,22 @@ def generate_tokens(employee_id: int, received_tokens: dict[str, str] = None) ->
             key=JWT_SECRET,
             algorithm="HS256",
         ),
-    }
-    Token.objects.create(user=user, refresh=tokens['refresh'], access=tokens['access'])
-    return tokens
+        user_id=user.id
+    )
+
+    await auth_repo.create(
+        session,
+        tokens
+    )
+
+    return Tokens(
+        access=tokens.access_token,
+        refresh=tokens.refresh_token
+    )
 
 
-@router.post("/refresh", response_model=Result)
-async def refresh_tokens(received_tokens: Authorization = None,
-                         session: AsyncSession = Depends(get_session)) -> dict[str, str]:
+async def refresh_tokens(session: AsyncSession,
+                         received_tokens: Tokens = None) -> Tokens:
     """
     Refresh tokens
     :param session:
@@ -87,28 +92,29 @@ async def refresh_tokens(received_tokens: Authorization = None,
     :return: new tokens
     """
     if not received_tokens:
-        raise EmptyTokenError('No token provided')
+        raise TokenEmptyException
 
-    exist_token = await AuthRepo.get_by_refresh(
+    exist_token = await auth_repo.get_by_refresh_token(
         session,
         received_tokens.refresh_token
     )
 
     if not exist_token:
-        raise InvalidTokenError('No tokens for this user')
+        raise TokenNotFoundException
 
     try:
-        refresh = jwt.decode(received_tokens['refresh'],
+        refresh = jwt.decode(received_tokens.refresh_token,
                              key=JWT_SECRET,
                              algorithms="HS256",
                              verify=False)
     except jwt.exceptions.PyJWTError as e:
-        raise InvalidTokenError(e)
+        logger.error(f'Invalid token: {e}')
+        raise TokenInvalidException
 
     if datetime.datetime.strptime(refresh['expires_on'], '%Y-%m-%d %H:%M:%S.%f') < datetime.datetime.utcnow():
-        raise ExpiredTokenException('Refresh token expired')
+        raise TokenExpiredException
 
-    user = EmployeeRepo.get_by_id(session=get_session(), id=refresh['employee_id'])
+    user = employee_repo.get(session, refresh['employee_id'])
 
     tokens = {
         'access': jwt.encode(
@@ -137,55 +143,52 @@ async def refresh_tokens(received_tokens: Authorization = None,
     return exist_token
 
 
-def check_token(session: AsyncSession, received_tokens: dict[str, str] = None) -> Result:
+def check_token(session: AsyncSession,
+                received_tokens: Optional[Tokens] = None) -> Employee:
     """
     Check token
     :param session:
     :param received_tokens: tokens
     :return: user id
     """
-    if received_tokens is None:
-        raise
-
     if not received_tokens:
-        return Result('error', 'No token provided')
-
-    received_tokens = json.loads(str(received_tokens))
+        raise TokenEmptyException('No token provided')
 
     try:
         access = jwt.decode(received_tokens['access'], "redrum", algorithms="HS256", verify=False)
         refresh = jwt.decode(received_tokens['refresh'], "redrum", algorithms="HS256", verify=False)
     except jwt.exceptions.PyJWTError as e:
-        return Result('error', e)
+        logger.error(f'Invalid token: {e}')
+        raise TokenInvalidException('Invalid token')
 
-    user = User.objects.get_or_none(id=access['user_id'])
-    exist_token = Token.objects.get_or_none(user=user)
-    print(user)
+    user = await employee_repo.get(session, access['employee_id'])
+    exist_token = await auth_repo.get_by_user_id(session, user.id)
 
     if not exist_token:
-        return Result('error', 'No tokens for this user')
+        raise
 
     try:
         exist_access = jwt.decode(exist_token.access, "redrum", algorithms="HS256", verify=False)
         exist_refresh = jwt.decode(exist_token.refresh, "redrum", algorithms="HS256", verify=False)
     except jwt.exceptions.PyJWTError as e:
-        return Result('error', e)
+        logger.error(f'Invalid token: {e}')
+        raise TokenInvalidException('Invalid token')
 
     if access['user_id'] != refresh['user_id'] or \
             access['user_id'] != exist_access['user_id'] or \
             refresh['user_id'] != exist_refresh['user_id'] or \
             access != exist_access or \
             refresh != exist_refresh:
-        return Result('error', 'Invalid token')
+        raise TokenInvalidException('Invalid token')
 
     if datetime.datetime.strptime(access['expires_on'], '%Y-%m-%d %H:%M:%S.%f') \
             < datetime.datetime.strptime(exist_access['expires_on'], '%Y-%m-%d %H:%M:%S.%f'
                                          ):
-        return Result('error', 'Access token expired')
+        raise TokenExpiredException('Access token expired')
 
     if datetime.datetime.strptime(refresh['expires_on'], '%Y-%m-%d %H:%M:%S.%f') \
             < datetime.datetime.strptime(exist_refresh['expires_on'], '%Y-%m-%d %H:%M:%S.%f'
                                          ):
-        return Result('error', 'Refresh token expired')
+        raise TokenExpiredException('Refresh token expired')
 
-    return Result('ok', access['user_id'])
+    return user
