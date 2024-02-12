@@ -15,7 +15,7 @@ class AbstractRepo:
 
     async def create(self, session: AsyncSession, **kwargs):
         instance = self.model(**kwargs)
-        await session.add(instance)
+        session.add(instance)
         await session.commit()
         return instance
 
