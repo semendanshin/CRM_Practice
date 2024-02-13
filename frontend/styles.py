@@ -32,6 +32,9 @@ class SubpageStyle(Style):
     file = 'subpage_styles.css'
 
 
+class AuthStyle(Style):
+    file = 'auth.css'
+
 def add_styles(ui, *args) -> None:
     ui.add_head_html(
         Fonts.get_fonts()

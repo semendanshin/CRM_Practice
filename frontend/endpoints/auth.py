@@ -5,7 +5,10 @@ from fastapi.responses import RedirectResponse
 from nicegui import APIRouter
 
 from nicegui import app, ui
+
+from frontend.components import BaseButton, BaseInput, BaseLabel
 from frontend.config import passwords
+from frontend.styles import SubpageStyle, add_styles, AuthStyle
 
 router = APIRouter(prefix='/login')
 
@@ -21,10 +24,18 @@ def login() -> Optional[RedirectResponse]:
         else:
             ui.notify('Wrong username or password', color='negative')
 
+    add_styles(ui, SubpageStyle, AuthStyle)
+
     if app.storage.user.get('authenticated', False):
         return RedirectResponse('/')
-    ui.card().classes(add='container')
-    username = ui.input('Username').on('keydown.enter', try_login)
-    password = ui.input('Password', password=True, password_toggle_button=True).on('keydown.enter', try_login)
-    ui.button('Sign in', on_click=try_login, color='#D9CDC4').classes(add='container')#.style('border: 1px solid black; border-radius: 12px; text-transform: none; flex-direction: row; align-items: center; weidth: 500%;')
+
+    #with ui.card()
+    BaseLabel(text='НАЗВАНИЕ crm').style('align-item: left;')
+    # with ui.element('div').classes(add='login-container'):
+    with ui.element('div').classes(add='login-container'):
+    # with ui.card().style(add="display: inline-flex;flex-direction: column;justify-content: center;"):
+        BaseLabel(text='Sign in').classes(add='label').style('font-family: Montserrat Alternates; transform: translateY(-100px);')
+        username = BaseInput('Email address').on('keydown.enter', try_login).props(add="standout style=\"border-radius: 10px\"")
+        password = BaseInput('Password').on('keydown.enter', try_login).props(add="standout style=\"border-radius: 10px; transform: translateY(50px)\"")
+        BaseButton(text='Sign in', on_click=try_login, color='#FFEFD5').classes(add='button').style('font-family: Montserrat Alternates;')
     return None

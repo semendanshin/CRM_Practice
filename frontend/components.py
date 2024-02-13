@@ -1,3 +1,5 @@
+from typing import Callable
+
 from nicegui import ui
 
 
@@ -19,3 +21,22 @@ class CRMNameLabel(BaseLabel):
 #         super().__init__(*args, **kwargs)
 #
 #         self.
+
+class BaseButton(ui.button):
+    def __init__(self, text: str = '', on_click: Callable = None, color: str = None, ):
+        super().__init__(text, on_click=on_click, color=color)
+        self.tag = 'button'
+        self._text = text
+        self.props(add=f'value="{text}"')
+
+
+class BaseInput(ui.input):
+    def __init__(self, placeholder: str = ''):
+        super().__init__(placeholder=placeholder)
+        self.tag = 'input'
+
+
+class BaseInput(ui.input):
+    def __init__(self, placeholder: str = ''):
+        super().__init__(placeholder=placeholder)
+        self.tag = 'input'
