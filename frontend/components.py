@@ -16,12 +16,6 @@ class CRMNameLabel(BaseLabel):
         super().__init__(self.label_text)
 
 
-# class Font(ui.textarea):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#
-#         self.
-
 class BaseButton(ui.button):
     def __init__(self, text: str = '', on_click: Callable = None, color: str = None, ):
         super().__init__(text, on_click=on_click, color=color)
@@ -36,7 +30,20 @@ class BaseInput(ui.input):
         self.tag = 'input'
 
 
-class BaseInput(ui.input):
-    def __init__(self, placeholder: str = ''):
-        super().__init__(placeholder=placeholder)
-        self.tag = 'input'
+class BaseDiv(ui.element):
+    def __init__(self):
+        super().__init__('div')
+
+
+class BaseIcon(ui.icon):
+    def __init__(self, icon_name: str):
+        super().__init__(icon_name)
+
+        self.tag = 'img'
+
+
+class SideMenuOption:
+    def __init__(self, icon_name: str, button_text: str):
+        with BaseDiv():
+            BaseIcon(icon_name)
+            BaseButton(button_text)

@@ -1,3 +1,8 @@
 label {
     font-family: Montserrat Alternates;
 }
+button {
+    width: 43px;
+    height: 100px;
+    color: black;
+}
