@@ -25,12 +25,17 @@ def CrudFactory(model):
 
         @classmethod
         async def update(cls, session: AsyncSession, record_id: int, **kwargs):
-            await session.execute(select(cls.model).where(cls.model.id == record_id))
+            instance = await session.execute(select(cls.model).where(cls.model.id == record_id))
+            instance = instance.scalars().first()
+            for key, value in kwargs.items():
+                if value is not None:
+                    setattr(instance, key, value)
             await session.commit()
 
         @classmethod
         async def delete(cls, session: AsyncSession, record_id: int):
-            await session.execute(select(cls.model).where(cls.model.id == record_id))
+            instance = await session.execute(select(cls.model).where(cls.model.id == record_id))
+            await session.delete(instance)
             await session.commit()
 
     AbstractRepo.model = model

@@ -13,7 +13,7 @@ from routes.auth.exceptions import (
     TokenNotFoundException,
     TokenEmptyException,
 )
-from conf import JWT_SECRET, ACCESS_EXPIRE_DAYS, REFRESH_EXPIRE_DAYS
+from config import config
 from crud import auth_repo, employee_repo
 from db.models import Employee
 
@@ -27,7 +27,7 @@ class Tokens(BaseModel):
     refresh: str
 
 
-def create_tokens(session: AsyncSession,
+async def create_tokens(session: AsyncSession,
                   employee_id: int,
                   received_tokens: Optional[Tokens] = None) -> Tokens:
     """
@@ -43,11 +43,11 @@ def create_tokens(session: AsyncSession,
     """
 
     try:
-        user = check_token(session, received_tokens=received_tokens)
+        user = await check_token(session, received_tokens=received_tokens)
     except Union[TokenEmptyException, TokenNotFoundException]:
-        user = employee_repo.get_by_id(session, employee_id)
+        user = await employee_repo.get_by_id(session, employee_id)
     except Union[TokenInvalidException, TokenExpiredException]:
-        user = employee_repo.get_by_id(session, employee_id)
+        user = await employee_repo.get_by_id(session, employee_id)
         await auth_repo.delete_by_user_id(session, user.id)
 
     tokens = AuthorizationCreate(
@@ -55,18 +55,18 @@ def create_tokens(session: AsyncSession,
             {
                 'user_id': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
-                               datetime.timedelta(days=ACCESS_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                               datetime.timedelta(days=config.ACCESS_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
             },
-            key=JWT_SECRET,
+            key=config.JWT_SECRET,
             algorithm="HS256",
         ),
         refresh=jwt.encode(
             {
                 'user_id': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
-                               datetime.timedelta(days=REFRESH_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                               datetime.timedelta(days=config.REFRESH_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
             },
-            key=JWT_SECRET,
+            key=config.JWT_SECRET,
             algorithm="HS256",
         ),
         user_id=user.id
@@ -104,7 +104,7 @@ async def refresh_tokens(session: AsyncSession,
 
     try:
         refresh = jwt.decode(received_tokens.refresh_token,
-                             key=JWT_SECRET,
+                             key=config.JWT_SECRET,
                              algorithms="HS256",
                              verify=False)
     except jwt.exceptions.PyJWTError as e:
@@ -114,25 +114,25 @@ async def refresh_tokens(session: AsyncSession,
     if datetime.datetime.strptime(refresh['expires_on'], '%Y-%m-%d %H:%M:%S.%f') < datetime.datetime.utcnow():
         raise TokenExpiredException
 
-    user = employee_repo.get(session, refresh['employee_id'])
+    user = await employee_repo.get(session, refresh['employee_id'])
 
     tokens = {
         'access': jwt.encode(
             {
                 'employee_id': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
-                               datetime.timedelta(days=ACCESS_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                               datetime.timedelta(days=config.ACCESS_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
             },
-            key=JWT_SECRET,
+            key=config.JWT_SECRET,
             algorithm="HS256",
         ),
         'refresh': jwt.encode(
             {
                 'employee_id': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
-                               datetime.timedelta(days=REFRESH_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
+                               datetime.timedelta(days=config.REFRESH_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
             },
-            key=JWT_SECRET,
+            key=config.JWT_SECRET,
             algorithm="HS256",
         ),
     }
@@ -143,7 +143,7 @@ async def refresh_tokens(session: AsyncSession,
     return exist_token
 
 
-def check_token(session: AsyncSession,
+async def check_token(session: AsyncSession,
                 received_tokens: Optional[Tokens] = None) -> Employee:
     """
     Check token

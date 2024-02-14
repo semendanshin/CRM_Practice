@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Boo
 
 from datetime import datetime, date
 
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, relationship
 
 Base = declarative_base()
 
@@ -161,6 +161,7 @@ class Ticket(Base):
     id = Column(Integer, primary_key=True)
     description = Column(String)
     status_id = Column(Integer, ForeignKey('ticket_statuses.id'))
+    status = relationship('TicketStatus')
     type_id = Column(Integer, ForeignKey('ticket_types.id'))
     client_id = Column(Integer, ForeignKey('clients.id'))
     employee_id = Column(Integer, ForeignKey('employees.id'))
@@ -377,4 +378,13 @@ class Authorization(Base):
     access_token = Column(String)
     refresh_token = Column(String)
     created_at = Column(DateTime, default=datetime.now)
-    expired_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+
+class BotAuthorization(Base):
+    __tablename__ = 'bot_authorizations'
+
+    id = Column(Integer, primary_key=True)
+    client_id = Column(Integer, ForeignKey('clients.id'))
+    client = relationship('Client')
+    token = Column(String, unique=True)
+    created_at = Column(DateTime, default=datetime.now)

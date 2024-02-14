@@ -32,7 +32,7 @@ async def check_tokens_route(
         session: AsyncSession = Depends(get_session)
 ):
     try:
-        return check_token(
+        return await check_token(
             session,
             tokens
         )
