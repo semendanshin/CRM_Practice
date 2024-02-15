@@ -6,3 +6,7 @@ button {
     height: 100px;
     color: black;
 }
+html *
+{
+    font-family: "Montserrat Alternates" !important;
+}

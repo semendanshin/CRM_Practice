@@ -1,13 +1,12 @@
 input {
     height: 30px;
-    width: 90%;
+    width: 100%;
     box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.25);
     border: 0.5px solid coral;
     background-color: #DCDCDC;
     text-indent: 10px;
     flex-grow: 0;
     flex-shrink: 1;
-
 }
 
 button {
@@ -16,9 +15,10 @@ button {
     text-transform: none;
     width: 35%;
     height: 30px;
-    align-item: center;
-    transform: translateY(90px);
-    font-family: Montserrat Alternates;
+    align-self: center !important;
+    justify-content: center !important;
+    font-family: Montserrat Alternates !important;
+    font-weight: 700 !important;
 }
 
 ::placeholder { /* Most modern browsers support this now. */
@@ -27,7 +27,29 @@ button {
 
 label {
     color: #000000;
-    font-family: Montserrat Alternates;
-    width: 80%;
+    font-family: Montserrat Alternates !important;
+    align-self: flex-start !important;
 }
 
+.create-line {
+  width: 100%;
+  border-top: 0.15px solid coral;
+}
+
+a {
+    font-family: Montserrat Alternates;
+    font-weight: 700;
+    color: #C0C0C0;
+    text-decoration: none;
+}
+
+select{
+    height: 30px;
+    width: 100%;
+    box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.25);
+    border: 0.5px solid coral;
+    background-color: #DCDCDC;
+    text-indent: 10px;
+    flex-grow: 0;
+    flex-shrink: 1;
+}

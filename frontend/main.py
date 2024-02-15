@@ -5,7 +5,8 @@ from nicegui import ui, app, core
 from frontend.config import STORAGE_SECRET
 from middlewares import AuthMiddleware
 
-from frontend.endpoints import index_router, auth_router, subpage_router
+from frontend.endpoints import index_router, auth_router, subpage_router, registr_router
+
 
 
 app.add_middleware(AuthMiddleware)
@@ -13,6 +14,7 @@ app.add_middleware(AuthMiddleware)
 app.include_router(index_router)
 app.include_router(auth_router)
 app.include_router(subpage_router)
+app.include_router(registr_router)
 
 
 ui.run(storage_secret=STORAGE_SECRET, show=False, port=8084)
