@@ -38,10 +38,32 @@ class AuthStyle(Style):
 class RegistrStyle(Style):
     file = 'registr.css'
 
+class IndexStyle(Style):
+    file = 'index.css'
+
+
+class CustomersStyle(Style):
+    file = 'customers.css'
+
+
+class EmployeesStyle(Style):
+    file = 'employees.css'
+
+
+class StorageStyle(Style):
+    file = 'storage.css'
+
+
+class ApplicationStyle(Style):
+    file = 'application.css'
+
+
 def add_styles(ui, *args) -> None:
     ui.add_head_html(
         Fonts.get_fonts()
     )
+
+
 
     for style in args:
         ui.add_head_html(

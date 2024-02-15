@@ -1,0 +1,44 @@
+body {
+    background-color: whitesmoke;
+}
+
+label {
+    font-family: Montserrat Alternates;
+}
+
+b {
+    background-color: #FFEFD5;
+    border-radius: 10px;
+}
+
+button {
+    width: 43px;
+    height: 100px;
+    color: black;
+    font-family: Montserrat Alternates !important;
+}
+
+input {
+    height: 30px;
+    width: 90%;
+    box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.25);
+    border: 0.5px solid coral;
+    background-color: #DCDCDC;
+    text-indent: 10px;
+    flex-grow: 0;
+    flex-shrink: 1;
+
+}
+
+::placeholder { /* Most modern browsers support this now. */
+    font-family: Montserrat Alternates;
+}
+
+.index-container{
+    width: 30%;
+    height: 30px;
+    display: flex;
+    font-family: Montserrat Alternates !important;
+    justify-content: left;
+
+}
