@@ -1,9 +1,10 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Boolean, CheckConstraint, Enum
+from sqlalchemy.orm import relationship
 
 from datetime import datetime, date
 
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy.orm import Mapped
 
 Base = declarative_base()
 
@@ -18,6 +19,8 @@ class TicketType(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    ticket = relationship('Ticket', back_populates='ticket_type')
+
 
 class TicketStatus(Base):
     __tablename__ = 'ticket_statuses'
@@ -26,6 +29,8 @@ class TicketStatus(Base):
     name = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    ticket = relationship('Ticket', back_populates='ticket_status')
 
 
 class Position(Base):
@@ -36,6 +41,8 @@ class Position(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    employee = relationship('Employee', back_populates='position')
+
 
 class Group(Base):
     __tablename__ = 'groups'
@@ -44,6 +51,8 @@ class Group(Base):
     name = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    employee = relationship('Employee', back_populates='group')
 
 
 class Employee(Base):
@@ -60,6 +69,10 @@ class Employee(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    position = relationship('Position', back_populates='employee')
+    group = relationship('Group', back_populates='employee')
+    ticket = relationship('Ticket', back_populates='employee')
+
 
 class SLA(Base):
     __tablename__ = 'slas'
@@ -67,6 +80,8 @@ class SLA(Base):
     id = Column(Integer, primary_key=True)
     file_id = Column(String)
     created_at = Column(DateTime, default=datetime.now)
+
+    client_type = relationship('ClientType', back_populates='sla')
 
 
 class Agreement(Base):
@@ -76,6 +91,8 @@ class Agreement(Base):
     file_id = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    client = relationship('Client', back_populates='agreement')
 
 
 class ClientType(Base):
@@ -87,6 +104,9 @@ class ClientType(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    clients = relationship('Client', back_populates='client_type')
+    sla = relationship('SLA', back_populates='client_type')
+
 
 class ClientPaymentStatus(Base):
     __tablename__ = 'client_payment_statuses'
@@ -95,6 +115,8 @@ class ClientPaymentStatus(Base):
     name = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    client = relationship('Client', back_populates='client_payment_status')
 
 
 class Client(Base):
@@ -115,6 +137,15 @@ class Client(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    employee = relationship('Employee', 'client')
+    agreement = relationship('Agreement', 'client')
+    client_type = relationship('ClientType', 'client')
+    client_payment_status = relationship('ClientPaymentStatus', 'client')
+    client_employee = relationship('ClientEmployee', back_populates='client')
+    ticket = relationship('Ticket', back_populates='client')
+    client_object = relationship('ClientObject', back_populates='client')
+    warehouse = relationship('Warehouse', back_populates='client')
+
 
 class ClientEmployee(Base):
     __tablename__ = 'client_employees'
@@ -130,6 +161,8 @@ class ClientEmployee(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    client = relationship('Client', back_populates='client_employee')
+
 
 class Observer(Base):
     __tablename__ = 'observers'
@@ -139,6 +172,9 @@ class Observer(Base):
     employee_id: Mapped[int] = Column(Integer, ForeignKey('employees.id'))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    ticket = relationship('Ticket', back_populates='observer')
+    employee = relationship('Employee', back_populates='observer')
 
 
 class ClientAgreement(Base):
@@ -152,6 +188,9 @@ class ClientAgreement(Base):
     service_period_start: Mapped[date] = Column(DateTime)
     service_period_end: Mapped[date] = Column(DateTime)
 
+    agreement = relationship('Agreement', back_populates='client_agreement')
+    ticket = relationship('Ticket', back_populates='client_agreement')
+
 
 class Ticket(Base):
     __tablename__ = 'tickets'
@@ -161,7 +200,6 @@ class Ticket(Base):
     id = Column(Integer, primary_key=True)
     description = Column(String)
     status_id = Column(Integer, ForeignKey('ticket_statuses.id'))
-    status = relationship('TicketStatus')
     type_id = Column(Integer, ForeignKey('ticket_types.id'))
     client_id = Column(Integer, ForeignKey('clients.id'))
     employee_id = Column(Integer, ForeignKey('employees.id'))
@@ -169,6 +207,15 @@ class Ticket(Base):
     client_agreement_id = Column(Integer, ForeignKey('client_agreements.id'))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    status = relationship('TicketStatus', back_populates='ticket')
+    ticket_type = relationship('TicketType', back_populates='ticket')
+    client = relationship('Client', back_populates='ticket')
+    employee = relationship('Employee', back_populates='ticket')
+    client_agreement = relationship('ClientAgreement', back_populates='ticket')
+    ticket_task = relationship('TicketTask', back_populates='ticket')
+    attachment = relationship('Attachment', back_populates='ticket')
+    service_to_ticket = relationship('ServiceToTicket', back_populates='ticket')
 
 
 class TicketTaskStatuses(Base):
@@ -178,6 +225,8 @@ class TicketTaskStatuses(Base):
     name = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    ticket_task = relationship('TicketTask', back_populates='ticket_tast_statuses')
 
 
 class TicketTask(Base):
@@ -190,6 +239,9 @@ class TicketTask(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    ticket_task_statuses = relationship('TicketTaskStatuses', back_populates='ticket_task')
+    ticket = relationship('Ticket', 'ticket_task')
+
 
 class Attachment(Base):
     __tablename__ = 'attachments'
@@ -199,6 +251,9 @@ class Attachment(Base):
     ticket_id = Column(Integer, ForeignKey('tickets.id'))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    ticket = relationship('Ticket', back_populates='attachment')
+
 
 
 class ClientObject(Base):
@@ -212,6 +267,16 @@ class ClientObject(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    client = relationship('Client', back_populates='client_object')
+    devices = relationship('Devices', back_populates='client_object')
+    device_operation_move_from = relationship('DeviceOperationMove')
+    device_operation_move_to = relationship('DeviceOperationMove')
+    device_operation_out_from = relationship('DeviceOperationOut')
+    device_operation_out_to = relationship('DeviceOperationOut')
+    from_tmc_operation_move = relationship('TMCOperationMove')
+    to_tmc_operation_move = relationship('TMCOperationMove')
+    from_tmc_operation_out = relationship('TMCOperationOut')
+
 
 class Warehouse(Base):
     __tablename__ = 'warehouses'
@@ -223,6 +288,17 @@ class Warehouse(Base):
     longitude = Column(Float)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    client = relationship('Client', back_populates='warehouse')
+    devices = relationship('Devices', back_populates='warehouse')
+    devices_operation_in = relationship('DevicesOperationIn')
+    from_devices_operation_move = relationship('DeviceOperationMove')
+    to_devices_operation_move = relationship('DeviceOperationMove')
+    devices_operation_out_from = relationship('DeviceOperationOut')
+    tmc_operation_in = relationship('TMCOperationIn')
+    from_tmc_operation_move = relationship('TMCOperationMove')
+    to_tmc_operation_move = relationship('TMCOperationMove')
+    from_tmc_operation_out = relationship('TMCOperationOut')
 
 
 class Devices(Base):
@@ -239,6 +315,11 @@ class Devices(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    client_object = relationship('ClientObject', back_populates='devices')
+    warehouse = relationship('Warehouse', back_populates='devices')
+    devices_operation_in = relationship('DevicesOperationIn', back_populates='devices')
+    devices_operation_out = relationship('DeviceOperationOut', back_populates='devices')
+
 
 class DevicesOperationIn(Base):
     __tablename__ = 'devices_operations_in'
@@ -249,6 +330,9 @@ class DevicesOperationIn(Base):
     warehouse_id: Mapped[int] = Column(Integer, ForeignKey('warehouses.id'))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    devices = relationship('Devices')
+    warehouse = relationship('Warehouse')
 
 
 class DeviceOperationMove(Base):
@@ -265,6 +349,12 @@ class DeviceOperationMove(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    devices = relationship('Devices', 'device_operation_move')
+    from_warehouse = relationship('Warehouse')
+    from_client_object = relationship('ClientObject')
+    to_warehouse = relationship('Warehouse')
+    to_client_object = relationship('ClientObject')
+
 
 class DeviceOperationOut(Base):
     __tablename__ = 'devices_operations_out'
@@ -279,6 +369,10 @@ class DeviceOperationOut(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    device = relationship('Devices')
+    from_warehouse = relationship('Warehouse')
+    from_client_object = relationship('ClientObject')
+
 
 class TMC(Base):
     __tablename__ = 'tmc'
@@ -288,6 +382,10 @@ class TMC(Base):
     description: Mapped[str] = Column(String)
     created_at: Mapped[datetime] = Column(DateTime, default=datetime.now)
     updated_at: Mapped[str] = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    tmc_operation_in = relationship('TMCOperationIn', back_populates='tmc')
+    tmc_operation_move = relationship('TMCOperationMove', back_populates='tmc')
+    tmc_operation_out = relationship('TMCOperationOut', back_populates='tmc')
 
 
 class TMCOperationIn(Base):
@@ -299,6 +397,9 @@ class TMCOperationIn(Base):
     amount: Mapped[int] = Column(Integer)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    tmc = relationship('TMC', back_populates='tmc_operation_in')
+    warehouse = relationship('Warehouse')
 
 
 class TMCOperationMove(Base):
@@ -314,6 +415,12 @@ class TMCOperationMove(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    tmc = relationship('TMC', back_populates='tmc_operation_move')
+    from_warehouse = relationship('Warehouse')
+    from_client_object = relationship('ClientObject')
+    to_warehouse = relationship('Warehouse')
+    to_client_object = relationship('ClientObject')
+
 
 class TMCOperationOut(Base):
     __tablename__ = 'tmc_operations_out'
@@ -326,6 +433,10 @@ class TMCOperationOut(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    tmc = relationship('TMC', back_populates='tmc_operation_out')
+    from_warehouse = relationship('Warehouse')
+    from_client_object = relationship('ClientObject')
+
 
 class Service(Base):
     __tablename__ = 'services'
@@ -335,6 +446,8 @@ class Service(Base):
     description: Mapped[str] = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    service_to_ticket = relationship('ServiceToTicket', back_populates='service')
 
 
 class ServiceToTicket(Base):
@@ -349,6 +462,9 @@ class ServiceToTicket(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    service = relationship('Service', back_populates='service_to_ticket')
+    ticket = relationship('Tickets', back_populates='service_to_ticket')
+
 
 class Instruction(Base):
     __tablename__ = 'instructions'
@@ -360,6 +476,8 @@ class Instruction(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
+    instruction_attachment = relationship('InstructionAttachment', back_populates='instruction')
+
 
 class InstructionAttachment(Base):
     __tablename__ = 'instruction_attachments'
@@ -369,6 +487,8 @@ class InstructionAttachment(Base):
     instruction_id = Column(Integer, ForeignKey('instructions.id'))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+    instruction = relationship('Instruction', back_populates='instruction_attachment')
 
 
 class Authorization(Base):
