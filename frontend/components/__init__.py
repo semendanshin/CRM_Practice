@@ -1,1 +1,1 @@
-from base_components import *
+from .base_components import *

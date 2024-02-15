@@ -2,6 +2,8 @@ from typing import Callable
 
 from nicegui import ui
 
+from fastapi.responses import RedirectResponse
+
 
 class BaseLabel(ui.label):
     def __init__(self, text: str = ''):  # get all super().__init__() args to pass them
@@ -35,15 +37,33 @@ class BaseDiv(ui.element):
         super().__init__('div')
 
 
-class BaseIcon(ui.icon):
-    def __init__(self, icon_name: str):
-        super().__init__(icon_name)
+class BaseIcon(ui.image):
+    def __init__(self, image_name: str):
+        super().__init__(image_name)
 
         self.tag = 'img'
 
 
 class SideMenuOption:
-    def __init__(self, icon_name: str, button_text: str):
+    def __init__(self, image_name: str, button_text: str, button_href: str = ''):
         with BaseDiv():
-            BaseIcon(icon_name)
-            BaseButton(button_text)
+            BaseIcon(image_name)
+            BaseButton(button_text, on_click=lambda: ui.open(button_href)).classes(add='button')
+
+
+class SideMenuButtonIcon(BaseIcon):
+    def __init__(self, image_name: str):
+        with BaseDiv():
+            BaseIcon(image_name)
+
+class BaseLink(ui.link):
+    def __init__(self, target: str):
+        super().__init__(target=target)
+
+
+class IconWithLink:
+    def __init__(self, target: str, image_name):
+
+        with BaseDiv():
+            with BaseLink(target=target):
+                BaseIcon(image_name=image_name)
