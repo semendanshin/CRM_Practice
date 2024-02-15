@@ -27,4 +27,4 @@ def storage_page() -> None:
 
     with ui.element('div'):
         IconWithLink(target='', image_name='static/settings.png')
-        IconWithLink(target='', image_name='statick/instruction.png')
+        IconWithLink(target='', image_name='static/instruction.png')
