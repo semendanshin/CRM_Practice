@@ -12,8 +12,8 @@ b {
 }
 
 button {
-    width: 43px;
-    height: 100px;
+    width: 40px;
+    height: 60px;
     color: black;
     font-family: Montserrat Alternates !important;
 }
@@ -35,10 +35,20 @@ input {
 }
 
 .index-container{
-    width: 30%;
-    height: 30px;
+    width: 20%;
+    height: 1px;
     display: flex;
     font-family: Montserrat Alternates !important;
     justify-content: left;
+    flex-direction: column;
 
+}
+
+index-1-container{
+    width: 20%;
+    height: 1px;
+    display: flex;
+    font-family: Montserrat Alternates !important;
+    justify-content: left;
+    flex-direction: row;
 }

@@ -49,6 +49,6 @@ def signup() -> Optional[RedirectResponse]:
         select = Select()
         select.set_options(['Select a role', 'Admin', 'Manager', 'User'])
 
-        BaseLink(text='Do you already have an account? Sign in', href='/login')
+        BaseLink(text='Do you already have an account? Sign in', target='/login')
         BaseButton(text='Sign up', on_click=try_signup, color='#FFEFD5').classes(add='button')
     return None

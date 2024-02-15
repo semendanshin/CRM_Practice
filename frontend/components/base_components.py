@@ -31,10 +31,10 @@ class BaseInput(ui.input):
         super().__init__(placeholder=placeholder)
         self.tag = 'input'
 
-   # @property.getter
-    #def value(self):
-     #   return self.value
 
+# @property.getter
+# def value(self):
+#   return self.value
 
 
 class BaseDiv(ui.element):
@@ -52,9 +52,8 @@ class BaseIcon(ui.image):
 class SideMenuOption:
     def __init__(self, image_name: str, button_text: str, button_href: str = ''):
         with BaseDiv():
-<<<<<<< HEAD
-            BaseIcon(icon_name)
-            BaseButton(button_text)
+            BaseIcon(image_name)
+            BaseButton(button_text, on_click=lambda: ui.open(button_href)).classes(add='button')
 
 
 class BaseLine(BaseDiv):
@@ -63,8 +62,8 @@ class BaseLine(BaseDiv):
 
 
 class BaseLink(ui.link):
-    def __init__(self, text: str = '', href: str = '', on_click: Callable = None):
-        super().__init__(text, target=href)
+    def __init__(self, text: str = '', target: str = '', on_click: Callable = None):
+        super().__init__(text, target=target)
         self.tag = 'a'
         self._text = text
         self.props(add=f'value="{text}"')
@@ -89,15 +88,13 @@ class Select(ui.element):
 
     def set_options(self, options: list):
         with self:
-            BaseLabel('Select a role !important').style('align-items: flex-start !important; color: #C0C0C0 !important;')
+            BaseLabel('Select a role !important').style(
+                'align-items: flex-start !important; color: #C0C0C0 !important;')
             for option in options:
                 with ui.element('option').props(add=f'value="{option}"'):
                     BaseLabel(option)
         self._props['options'] = options
         self.update()
-=======
-            BaseIcon(image_name)
-            BaseButton(button_text, on_click=lambda: ui.open(button_href)).classes(add='button')
 
 
 class SideMenuButtonIcon(BaseIcon):
@@ -105,15 +102,9 @@ class SideMenuButtonIcon(BaseIcon):
         with BaseDiv():
             BaseIcon(image_name)
 
-class BaseLink(ui.link):
-    def __init__(self, target: str):
-        super().__init__(target=target)
-
 
 class IconWithLink:
     def __init__(self, target: str, image_name):
-
         with BaseDiv():
             with BaseLink(target=target):
                 BaseIcon(image_name=image_name)
->>>>>>> de154c24806cdc3f27ebaf372a8773a7e55a803b

@@ -42,7 +42,7 @@ def login() -> Optional[RedirectResponse]:
         username = BaseInput('Email address').on('keydown.enter', try_login).props(add="standout style=\"border-radius: 10px\"")
         BaseLabel(text='Password').classes(add='label').style('align-items: flex-start !important;')
         password = BaseInput('Password').on('keydown.enter', try_login).props(add="standout style=\"border-radius: 10px\"")
-        BaseLink(text='New to НАЗВАНИЕ crm? Sign up', href= '/signup')
+        BaseLink(text='New to НАЗВАНИЕ crm? Sign up', target='/signup')
         BaseButton(text='Sign in', on_click=try_login, color='#FFEFD5').classes(add='button')
 
     return None
