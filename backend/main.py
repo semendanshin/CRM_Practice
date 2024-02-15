@@ -1,8 +1,6 @@
-from typing import AsyncGenerator
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
 
-from bot_backend.routes import router as bot_router
+from routes.bot.routes import router as bot_router
 from routes.auth.routes import router as auth_router
 
 from logging import getLogger

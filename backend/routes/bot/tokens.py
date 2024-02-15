@@ -19,8 +19,8 @@ logger = getLogger(__name__)
 
 async def check_token(
         token: str,
-        session: AsyncSession,
-) -> Client:
+        session: AsyncSession, ) -> Client:
+
     if not token:
         raise TokenEmptyException
 
@@ -42,13 +42,13 @@ async def create_token(
     instance = await bot_auth_repo.get_by_client_id(session=session, client_id=client_id)
 
     token = str(uuid4())
-    logger.info(token)
-    logger.info(client_id)
-
-    print(token, client_id)
+    # logger.info(token)
+    # logger.info(client_id)
+    #
+    # print(token, client_id)
 
     if instance:
-        print('updating')
+        # print('updating')
         await bot_auth_repo.update(
             session=session,
             record_id=instance.id,
