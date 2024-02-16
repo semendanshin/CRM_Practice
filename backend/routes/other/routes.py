@@ -111,6 +111,10 @@ data = [
         "repository": crud.TicketRepo,
     },
     {
+        "prefix": "ticket_type",
+        "repository": crud.TicketTypeRepo,
+    },
+    {
         "prefix": "ticket_task_status",
         "repository": crud.TicketTaskStatusRepo,
     },

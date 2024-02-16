@@ -7,15 +7,16 @@ class Classificator:
     base_url = config.CLASSIFICATOR_URL
 
     @classmethod
-    async def _post(cls, url, data):
+    async def _post(cls, url, params, data: dict = None):
+        data = data if data else {}
         async with AsyncClient() as client:
-            response = await client.post(f"{cls.base_url}{url}", json=data)
+            response = await client.post(f"{cls.base_url}{url}", params=params, json=data)
             response.raise_for_status()
             return response.json()
 
     @classmethod
     async def classify(cls, text: str, classifier: Literal["kneighbours", "sgd", "yandex_gpt"] = "yandex_gpt") -> str:
-        url = cls.base_url + "/classify/" + classifier
+        url = "/classify/" + classifier
         data = {"text": text}
         response = await cls._post(url, data)
         print(response)

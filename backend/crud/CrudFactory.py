@@ -28,8 +28,8 @@ class AbstractRepo:
         return [cls.get_schema.model_validate(obj) for obj in objects]
 
     @classmethod
-    async def get_where(cls, session: AsyncSession, **kwargs) -> list[Schema]:
-        res = await session.execute(select(cls.model).where(**kwargs))
+    async def get_filtered_by(cls, session: AsyncSession, **kwargs) -> list[Schema]:
+        res = await session.execute(select(cls.model).filter_by(**kwargs))
         objects = res.scalars().all()
         return [cls.get_schema.model_validate(obj) for obj in objects]
 

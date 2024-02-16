@@ -19,7 +19,8 @@ class TicketTypeCreate(TicketTypeUpdate):
 
 
 class TicketTypeResponse(TicketTypeCreate):
-    model_config = ConfigDict()
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     created_at: datetime
     updated_at: datetime

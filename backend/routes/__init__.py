@@ -6,7 +6,7 @@ from .other.routes import router as other_router
 
 
 router = APIRouter(
-    prefix="/api/v1",
+    prefix="",
     tags=[],
 )
 
