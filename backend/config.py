@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     KAFKA_TOPIC: str
     KAFKA_BOOTSTRAP_SERVERS: str
     KAFKA_CONSUMER_GROUP_PREFIX: str = "group"
+    CLASSIFICATOR_URL: str
     DB_HOST: str
     DB_PORT: int
     DB_USER: str

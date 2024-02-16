@@ -3,13 +3,14 @@ import json
 from logging import getLogger
 
 from aiokafka import AIOKafkaConsumer
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from classificator_repo import Classificator
 from config import config
 from crud import TicketRepo, BotAuthRepo, TicketTypeRepo
 from db import get_session
 from schemas import TicketCreate
+from traceback import print_exception
 
 logger = getLogger(__name__)
 
@@ -48,14 +49,29 @@ async def consume():
             for tp, messages in result.items():
                 if tp.topic == config.KAFKA_TOPIC and messages:
                     for message in messages:
-                        parsed_message = await parse_message(message.value)
+                        try:
+                            parsed_message = await parse_message(message.value)
+                        except ValidationError as e:
+                            logger.error(
+                                f"Error when trying to parse message: {print_exception(e)}"
+                            )
+                            continue
+
                         logger.info(f"Consume message: {parsed_message}")
-                        await create_ticket(parsed_message)
+
+                        try:
+                            await create_ticket(parsed_message)
+                        except Exception as e:
+                            logger.error(
+                                f"Error when trying to create ticket ({parsed_message}): {print_exception(e)}"
+                            )
+                            continue
+
                     await consumer.commit({tp: messages[-1].offset + 1})
             await asyncio.sleep(5)
     except Exception as e:
         logger.error(
-            f"Error when trying to consume request on topic {config.KAFKA_TOPIC}: {str(e)}"
+            f"Error when trying to consume request on topic {config.KAFKA_TOPIC}: {print_exception(e)}"
         )
         raise e
     finally:
