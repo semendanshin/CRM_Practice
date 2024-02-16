@@ -2,8 +2,8 @@ from nicegui import app, ui
 
 from nicegui import APIRouter
 
-from frontend.components import SideMenuButtonIcon, BaseLabel, SideMenuOption, BaseInput, CRMNameLabel, IconWithLink
-from frontend.styles import add_styles, Style, EmployeesStyle
+from components import SideMenuButtonIcon, BaseLabel, SideMenuOption, BaseInput, CRMNameLabel, IconWithLink
+from styles import add_styles, Style, EmployeesStyle
 
 router = APIRouter(prefix='/employees')
 

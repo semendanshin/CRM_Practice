@@ -98,13 +98,13 @@ class Select(ui.element):
 
 
 class SideMenuButtonIcon(BaseIcon):
-    def __init__(self, image_name: str):
+    def __init__(self, image_name: str = ''):
         with BaseDiv():
             BaseIcon(image_name)
 
 
-class IconWithLink:
-    def __init__(self, target: str, image_name):
+class IconWithLink(BaseLink, BaseIcon):
+    def __init__(self, target: str = '', image_name: str = ''):
         with BaseDiv():
             with BaseLink(target=target):
                 BaseIcon(image_name=image_name)

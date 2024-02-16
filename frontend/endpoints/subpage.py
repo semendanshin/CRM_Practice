@@ -1,6 +1,6 @@
 from nicegui import ui
-from frontend.styles import SubpageStyle
-from frontend.components import BaseLabel
+from styles import SubpageStyle
+from components import BaseLabel
 
 from nicegui import APIRouter
 
