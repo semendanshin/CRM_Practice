@@ -7,7 +7,7 @@ from .types import Response, HumanReadableResponse
 
 
 class SGDClassifier(AbstractClassifier):
-    def __init__(self, model_file: str = 'sgd_clf.pkl'):
+    def __init__(self, model_file: str = 'models/sgd_clf.pkl'):
         self.model = pickle.load(open(model_file, 'rb'))
 
     async def predict(self, text: str):

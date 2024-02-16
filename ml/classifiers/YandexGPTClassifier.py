@@ -47,13 +47,15 @@ class YandexGPTClassifier(AbstractClassifier):
     async def _post(self, url: str, headers: dict = None, json: dict = None):
         headers = headers if headers else {}
         json = json if json else {}
+        headers.update(self.headers)
         async with AsyncClient() as client:
-            response = await client.post(url, headers=headers | self.headers, json=json)
+            response = await client.post(url, headers=headers, json=json)
             response.raise_for_status()
             return response.json()
 
     async def _make_prompt(self, user_text, system_text):
-        return await self._post(self.URL, json=self._make_payload(user_text, system_text))
+        result = await self._post(self.URL, json=self._make_payload(user_text, system_text))
+        return result['result']['alternatives'][0]['message']['text']
 
     async def spell_checker(self, user_text: str):
         return await self._make_prompt(user_text, self.SPELL_CHECKER_PROMPT)
@@ -66,4 +68,4 @@ class YandexGPTClassifier(AbstractClassifier):
         response = await self.identify_category(
             processed_text
         )
-        return HumanReadableResponse(response['result']['alternatives'][0]['message']['text'])
+        return HumanReadableResponse(response)

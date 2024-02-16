@@ -7,7 +7,7 @@ from .types import HumanReadableResponse
 
 
 class KNeighbours(AbstractClassifier):
-    def __init__(self, model_file: str = 'knb_clf.pkl'):
+    def __init__(self, model_file: str = 'models/knb_clf.pkl'):
         self.model = pickle.load(open(model_file, 'rb'))
 
     async def predict(self, text: str):
