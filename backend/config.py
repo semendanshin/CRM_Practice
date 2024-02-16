@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     JWT_SECRET: SecretStr
     ACCESS_EXPIRE_DAYS: int
     REFRESH_EXPIRE_DAYS: int
+    KAFKA_TOPIC: str
+    KAFKA_BOOTSTRAP_SERVERS: str
+    KAFKA_CONSUMER_GROUP_PREFIX: str = "group"
     DB_HOST: str
     DB_PORT: int
     DB_USER: str

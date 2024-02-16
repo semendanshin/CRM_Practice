@@ -24,6 +24,7 @@ from .SLARepo import SLARepo
 from .TicketTaskRepo import TicketTaskRepo
 from .TicketRepo import TicketRepo
 from .TicketTaskStatusRepo import TicketTaskStatusRepo
+from .TicketTypeRepo import TicketTypeRepo
 from .TMCOperationInRepo import TMCOperationInRepo
 from .TMCOperationOutRepo import TMCOperationOutRepo
 from .TMCOperationMoveRepo import TMCOperationMoveRepo

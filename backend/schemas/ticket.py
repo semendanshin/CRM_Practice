@@ -32,7 +32,6 @@ class TicketCreate(TicketUpdate):
     type_id: int
     client_id: int
     employee_id: int
-    hours_spent: float
     client_agreement_id: int
 
 

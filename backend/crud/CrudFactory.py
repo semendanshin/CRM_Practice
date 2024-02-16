@@ -28,6 +28,12 @@ class AbstractRepo:
         return [cls.get_schema.model_validate(obj) for obj in objects]
 
     @classmethod
+    async def get_where(cls, session: AsyncSession, **kwargs) -> list[Schema]:
+        res = await session.execute(select(cls.model).where(**kwargs))
+        objects = res.scalars().all()
+        return [cls.get_schema.model_validate(obj) for obj in objects]
+
+    @classmethod
     async def create(cls, session: AsyncSession, **kwargs) -> Schema:
         instance = cls.model(**kwargs)
         session.add(instance)
