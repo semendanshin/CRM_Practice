@@ -51,7 +51,7 @@ class BaseIcon(ui.image):
 
 class SideMenuOption:
     def __init__(self, image_name: str, button_text: str, button_href: str = ''):
-        with BaseDiv():
+        with BaseDiv().classes(add='option-container'):
             BaseIcon(image_name)
             BaseButton(button_text, on_click=lambda: ui.open(button_href)).classes(add='button')
 
