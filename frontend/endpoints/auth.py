@@ -6,9 +6,9 @@ from nicegui import APIRouter
 
 from nicegui import app, ui
 
-from frontend.components import BaseButton, BaseInput, BaseLabel, CRMNameLabel, BaseDiv, BaseLine, BaseLink
-from frontend.config import passwords, STORAGE_SECRET
-from frontend.styles import SubpageStyle, add_styles, AuthStyle, RegistrStyle
+from components import BaseButton, BaseInput, BaseLabel, CRMNameLabel, BaseDiv, BaseLine, BaseLink
+from config import passwords, STORAGE_SECRET
+from styles import SubpageStyle, add_styles, AuthStyle, RegistrStyle
 
 router: APIRouter = APIRouter(prefix='/login')
 

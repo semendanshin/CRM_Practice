@@ -2,9 +2,8 @@ from nicegui import app, ui
 
 from nicegui import APIRouter
 
-from frontend.components import CRMNameLabel, BaseLabel, SideMenuOption, BaseIcon, BaseInput, BaseDiv, SideButton, \
-    IconWithLink
-from frontend.styles import Style, Fonts, add_styles, IndexStyle
+from components import CRMNameLabel, BaseLabel, SideMenuOption, BaseIcon, BaseInput, BaseDiv
+from styles import Style, Fonts, add_styles, IndexStyle
 
 router = APIRouter()
 
@@ -14,7 +13,6 @@ def main_page() -> None:
     add_styles(ui, Style, IndexStyle)
 
     with BaseDiv().classes(add='center-container'):
-
         with BaseDiv().classes(add='index-container'):
             with BaseDiv().classes(add='options-container'):
                 CRMNameLabel()

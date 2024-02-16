@@ -5,7 +5,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from nicegui import Client, app
 
-from frontend.config import unrestricted_page_routes
+from config import unrestricted_page_routes
 
 
 # will be done by firs-iln

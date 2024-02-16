@@ -2,12 +2,11 @@ from pprint import pprint
 
 from nicegui import ui, app, core
 
-from frontend.config import STORAGE_SECRET
+from config import STORAGE_SECRET
 from middlewares import AuthMiddleware
 
-from frontend.endpoints import index_router, auth_router, subpage_router, registr_router
+from endpoints import index_router, auth_router, subpage_router, registr_router, storage_router, application_router, customers_router, employees_router
 
-from frontend.endpoints import index_router, auth_router, subpage_router, customers_router, employees_router, storage_router, application_router
 
 
 
