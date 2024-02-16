@@ -101,10 +101,12 @@ async def create_ticket(message: Message):
         )
 
         if not types:
-            logger.error(f"Ticket type {type_str} not found.")
-            return
-
-        type_id = types[0].id
+            new_type = await TicketTypeRepo.create(
+                session, name=type_str
+            )
+            type_id = new_type.id
+        else:
+            type_id = types[0].id
 
         ticket = TicketCreate(
             description=message.description,
