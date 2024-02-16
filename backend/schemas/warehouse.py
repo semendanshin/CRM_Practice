@@ -14,10 +14,10 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class WarehouseUpdate(BaseModel):
-    name: Optional[str]
-    client_id: Optional[int]
-    latitude: Optional[float]
-    longitude: Optional[float]
+    name: Optional[str] = None
+    client_id: Optional[int] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 
 class WarehouseCreate(WarehouseUpdate):

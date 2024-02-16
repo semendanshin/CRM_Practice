@@ -14,9 +14,9 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class TMCOperationOutUpdate(BaseModel):
-    amount: Optional[int]
-    from_warehouse_id: Optional[int]
-    from_client_object_id: Optional[int]
+    amount: Optional[int] = None
+    from_warehouse_id: Optional[int] = None
+    from_client_object_id: Optional[int] = None
 
 
 class TMCOperationOutCreate(TMCOperationOutUpdate):

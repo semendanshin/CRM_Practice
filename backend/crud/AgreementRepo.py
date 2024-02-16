@@ -6,8 +6,8 @@ from schemas.agreement import AgreementCreate, AgreementUpdate, AgreementRespons
 class AgreementRepo(
     CrudFactory(
         Agreement,
-        AgreementCreate,
         AgreementUpdate,
+        AgreementCreate,
         AgreementResponse
     )
 ):

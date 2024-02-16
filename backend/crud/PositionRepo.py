@@ -7,8 +7,8 @@ from schemas.position import PositionCreate, PositionUpdate, PositionResponse
 class PositionRepo(
     CrudFactory(
         Position,
-        PositionCreate,
         PositionUpdate,
+        PositionCreate,
         PositionResponse
     )
 ):

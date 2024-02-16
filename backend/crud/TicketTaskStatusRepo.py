@@ -7,8 +7,8 @@ from schemas.ticket_task_status import TicketTaskStatusCreate, TicketTaskStatusU
 class TicketTaskStatusRepo(
     CrudFactory(
         TicketTaskStatus,
-        TicketTaskStatusCreate,
         TicketTaskStatusUpdate,
+        TicketTaskStatusCreate,
         TicketTaskStatusResponse
     )
 ):

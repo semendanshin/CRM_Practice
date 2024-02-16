@@ -13,8 +13,8 @@ updated_at: Mapped[str] = Column(DateTime, default=datetime.now, onupdate=dateti
 
 
 class TMCUpdate(BaseModel):
-    name: Optional[str]
-    description: Optional[str]
+    name: Optional[str] = None
+    description: Optional[str] = None
 
 
 class TMCCreate(TMCUpdate):

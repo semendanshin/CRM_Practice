@@ -7,8 +7,8 @@ from schemas.tmc_operation_out import TMCOperationOutCreate, TMCOperationOutUpda
 class TMCOperationOutRepo(
     CrudFactory(
         TMCOperationOut,
-        TMCOperationOutCreate,
         TMCOperationOutUpdate,
+        TMCOperationOutCreate,
         TMCOperationOutResponse
     )
 ):

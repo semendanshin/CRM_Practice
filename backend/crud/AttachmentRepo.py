@@ -7,8 +7,8 @@ from schemas.attachment import AttachmentCreate, AttachmentUpdate, AttachmentRes
 class AttachmentRepo(
     CrudFactory(
         Attachment,
-        AttachmentCreate,
         AttachmentUpdate,
+        AttachmentCreate,
         AttachmentResponse
     )
 ):

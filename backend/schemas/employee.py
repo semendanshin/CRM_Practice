@@ -18,13 +18,13 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class EmployeeUpdate(BaseModel):
-    name: Optional[str]
-    surname: Optional[str]
-    patronymic: Optional[str]
-    phone: Optional[str]
-    email: Optional[str]
-    position_id: Optional[int]
-    group_id: Optional[int]
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    patronymic: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    position_id: Optional[int] = None
+    group_id: Optional[int] = None
 
 
 class EmployeeCreate(EmployeeUpdate):

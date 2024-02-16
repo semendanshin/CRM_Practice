@@ -7,8 +7,8 @@ from schemas.device import DeviceCreate, DeviceUpdate, DeviceResponse
 class DeviceRepo(
     CrudFactory(
         Devices,
-        DeviceCreate,
         DeviceUpdate,
+        DeviceCreate,
         DeviceResponse
     )
 ):

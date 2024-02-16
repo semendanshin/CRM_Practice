@@ -13,9 +13,9 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class DeviceUpdate(BaseModel):
-    name: Optional[str]
-    client_object_id: Optional[int]
-    warehouse_id: Optional[int]
+    name: Optional[str] = None
+    client_object_id: Optional[int] = None
+    warehouse_id: Optional[int] = None
 
 
 class DeviceCreate(DeviceUpdate):

@@ -47,7 +47,8 @@ def generate_crud_router(
             data: Annotated[repository.update_schema, Depends()],
             session=Depends(get_session)
     ):
-        return await repository.update(session, record_id, **data.model_dump())
+        update_data = {key: value for key, value in data.model_dump().items() if value is not None}
+        return await repository.update(session, record_id, **update_data)
 
     @router.delete("/<record_id>")
     async def delete(

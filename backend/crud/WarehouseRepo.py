@@ -7,8 +7,8 @@ from schemas.warehouse import WarehouseCreate, WarehouseUpdate, WarehouseRespons
 class WarehouseRepo(
     CrudFactory(
         Warehouse,
-        WarehouseCreate,
         WarehouseUpdate,
+        WarehouseCreate,
         WarehouseResponse
     )
 ):

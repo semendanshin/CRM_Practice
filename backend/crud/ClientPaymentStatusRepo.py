@@ -7,8 +7,8 @@ from schemas.client_payment_status import ClientPaymentStatusUpdate, ClientPayme
 class ClientPaymentStatusRepo(
     CrudFactory(
         ClientPaymentStatus,
-        ClientPaymentStatusCreate,
         ClientPaymentStatusUpdate,
+        ClientPaymentStatusCreate,
         ClientPaymentStatusResponse
     )
 ):

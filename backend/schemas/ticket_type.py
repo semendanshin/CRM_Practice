@@ -11,7 +11,7 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class TicketTypeUpdate(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 class TicketTypeCreate(TicketTypeUpdate):

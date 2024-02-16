@@ -7,8 +7,8 @@ from schemas.device_operation_move import DeviceOperationMoveCreate, DeviceOpera
 class DeviceOperationMoveRepo(
     CrudFactory(
         DeviceOperationMove,
-        DeviceOperationMoveCreate,
         DeviceOperationMoveUpdate,
+        DeviceOperationMoveCreate,
         DeviceOperationMoveResponse
     )
 ):

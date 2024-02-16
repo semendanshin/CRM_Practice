@@ -20,11 +20,11 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class DeviceOperationOutUpdate(BaseModel):
-    description: Optional[str]
-    device_id: Optional[int]
-    from_warehouse_id: Optional[int]
-    from_client_object_id: Optional[int]
-    updated_at: Optional[datetime]
+    description: Optional[str] = None
+    device_id: Optional[int] = None
+    from_warehouse_id: Optional[int] = None
+    from_client_object_id: Optional[int] = None
+    updated_at: Optional[datetime] = None
 
 
 class DeviceOperationOutCreate(DeviceOperationOutUpdate):

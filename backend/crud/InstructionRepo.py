@@ -7,8 +7,8 @@ from schemas.instruction import InstructionCreate, InstructionUpdate, Instructio
 class InstructionRepo(
     CrudFactory(
         Instruction,
-        InstructionCreate,
         InstructionUpdate,
+        InstructionCreate,
         InstructionResponse
     )
 ):

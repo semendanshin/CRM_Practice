@@ -7,8 +7,8 @@ from schemas.group import GroupCreate, GroupUpdate, GroupResponse
 class GroupRepo(
     CrudFactory(
         Group,
-        GroupCreate,
         GroupUpdate,
+        GroupCreate,
         GroupResponse
     )
 ):

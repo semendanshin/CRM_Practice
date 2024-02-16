@@ -7,8 +7,8 @@ from schemas.service_to_ticket import ServiceToTicketCreate, ServiceToTicketUpda
 class ServiceToTicketRepo(
     CrudFactory(
         ServiceToTicket,
-        ServiceToTicketCreate,
         ServiceToTicketUpdate,
+        ServiceToTicketCreate,
         ServiceToTicketResponse
     )
 ):

@@ -7,8 +7,8 @@ from schemas.sla import SLACreate, SLAUpdate, SLAResponse
 class SLARepo(
     CrudFactory(
         SLA,
-        SLACreate,
         SLAUpdate,
+        SLACreate,
         SLAResponse
     )
 ):

@@ -18,12 +18,12 @@ to_client_object_id: Mapped[int] = Column(Integer, ForeignKey('client_objects.id
 
 
 class DeviceOperationMoveUpdate(BaseModel):
-    description: Optional[str]
-    device_id: Optional[int]
-    from_warehouse_id: Optional[int]
-    from_client_object_id: Optional[int]
-    to_warehouse_id: Optional[int]
-    to_client_object_id: Optional[int]
+    description: Optional[str] = None
+    device_id: Optional[int] = None
+    from_warehouse_id: Optional[int] = None
+    from_client_object_id: Optional[int] = None
+    to_warehouse_id: Optional[int] = None
+    to_client_object_id: Optional[int] = None
 
 
 class DeviceOperationMoveCreate(DeviceOperationMoveUpdate):

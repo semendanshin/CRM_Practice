@@ -19,13 +19,13 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class ClientUpdate(BaseModel):
-    name: Optional[str]
-    type_id: Optional[int]
-    agreement_id: Optional[int]
-    manager_id: Optional[int]
-    monthly_payment: Optional[float]
-    comment: Optional[str]
-    payment_status_id: Optional[int]
+    name: Optional[str] = None
+    type_id: Optional[int] = None
+    agreement_id: Optional[int] = None
+    manager_id: Optional[int] = None
+    monthly_payment: Optional[float] = None
+    comment: Optional[str] = None
+    payment_status_id: Optional[int] = None
 
 
 class ClientCreate(ClientUpdate):

@@ -16,8 +16,8 @@ created_at = Column(DateTime, default=datetime.now)
 
 
 class BotAuthorizationUpdate(BaseModel):
-    token: Optional[str]
-    client_id: Optional[int]
+    token: Optional[str] = None
+    client_id: Optional[int] = None
 
 
 class BotAuthorizationCreate(BotAuthorizationUpdate):

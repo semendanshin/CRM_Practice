@@ -13,7 +13,7 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 class ClientPaymentStatusUpdate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 class ClientPaymentStatusCreate(ClientPaymentStatusUpdate):

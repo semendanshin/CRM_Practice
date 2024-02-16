@@ -7,8 +7,8 @@ from schemas.ticket_type import TicketTypeCreate, TicketTypeUpdate, TicketTypeRe
 class TicketTypeRepo(
     CrudFactory(
         TicketType,
-        TicketTypeCreate,
         TicketTypeUpdate,
+        TicketTypeCreate,
         TicketTypeResponse
     )
 ):

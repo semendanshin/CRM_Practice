@@ -10,8 +10,8 @@ from schemas.bot_authorization import BotAuthorizationCreate, BotAuthorizationUp
 class BotAuthRepo(
     CrudFactory(
         BotAuthorization,
-        BotAuthorizationCreate,
         BotAuthorizationUpdate,
+        BotAuthorizationCreate,
         BotAuthorizationResponse
     )
 ):

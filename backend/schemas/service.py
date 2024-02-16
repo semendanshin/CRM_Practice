@@ -12,8 +12,8 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class ServiceUpdate(BaseModel):
-    name: Optional[str]
-    description: Optional[str]
+    name: Optional[str] = None
+    description: Optional[str] = None
 
 
 class ServiceCreate(ServiceUpdate):

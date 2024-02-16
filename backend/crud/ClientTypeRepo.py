@@ -7,8 +7,8 @@ from schemas.client_type import ClientTypeUpdate, ClientTypeCreate, ClientTypeRe
 class ClientTypeRepo(
     CrudFactory(
         ClientType,
-        ClientTypeCreate,
         ClientTypeUpdate,
+        ClientTypeCreate,
         ClientTypeResponse
     )
 ):

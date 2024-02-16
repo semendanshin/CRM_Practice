@@ -7,8 +7,8 @@ from schemas.tmc_operation_in import TMCOperationInCreate, TMCOperationInUpdate,
 class TMCOperationInRepo(
     CrudFactory(
         TMCOperationIn,
-        TMCOperationInCreate,
         TMCOperationInUpdate,
+        TMCOperationInCreate,
         TMCOperationInResponse
     )
 ):

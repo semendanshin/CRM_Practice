@@ -7,8 +7,8 @@ from schemas.instruction_attachment import InstructionAttachmentCreate, Instruct
 class InstructionAttachmentRepo(
     CrudFactory(
         InstructionAttachment,
-        InstructionAttachmentCreate,
         InstructionAttachmentUpdate,
+        InstructionAttachmentCreate,
         InstructionAttachmentResponse
     )
 ):

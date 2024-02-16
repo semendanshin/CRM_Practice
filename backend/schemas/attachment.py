@@ -8,14 +8,14 @@ id = Column(Integer, primary_key=True)
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class AttachmentUpdate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    file_id: Optional[str] = None
-    ticket_id: Optional[int] = None
+    file_id: Optional[str] = Field(None)
+    ticket_id: Optional[int] = Field(None)
 
 
 class AttachmentCreate(AttachmentUpdate):

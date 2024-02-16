@@ -7,8 +7,8 @@ from schemas.tmc_operation_move import TMCOperationMoveCreate, TMCOperationMoveU
 class TMCOperationMoveRepo(
     CrudFactory(
         TMCOperationMove,
-        TMCOperationMoveCreate,
         TMCOperationMoveUpdate,
+        TMCOperationMoveCreate,
         TMCOperationMoveResponse
     )
 ):

@@ -15,9 +15,9 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 class TicketTaskUpdate(BaseModel):
     id: int
-    description: Optional[str]
-    status_id: Optional[int]
-    ticket_id: Optional[int]
+    description: Optional[str] = None
+    status_id: Optional[int] = None
+    ticket_id: Optional[int] = None
 
 
 class TicketTaskCreate(BaseModel):

@@ -11,9 +11,9 @@ SQLModel = TypeVar("SQLModel", bound=declarative_base())
 
 class AbstractRepo:
     model: SQLModel
-    update_schema: Schema
-    create_schema: Schema
-    get_schema: Schema
+    update_schema: Type[Schema]
+    create_schema: Type[Schema]
+    get_schema: Type[Schema]
 
     @classmethod
     async def get(cls, session: AsyncSession, record_id: int) -> Schema | None:
@@ -29,7 +29,6 @@ class AbstractRepo:
 
     @classmethod
     async def create(cls, session: AsyncSession, **kwargs) -> Schema:
-        print(cls.model, kwargs)
         instance = cls.model(**kwargs)
         session.add(instance)
         await session.commit()
@@ -38,7 +37,8 @@ class AbstractRepo:
 
     @classmethod
     async def update(cls, session: AsyncSession, record_id: int, **kwargs) -> Schema:
-        await session.execute(update(cls.model).where(cls.model.id == record_id).values(**kwargs))
+        clean_kwargs = {key: value for key, value in kwargs.items() if value is not None}
+        await session.execute(update(cls.model).where(cls.model.id == record_id).values(**clean_kwargs))
         await session.commit()
         return await cls.get(session, record_id)
 
@@ -50,9 +50,9 @@ class AbstractRepo:
 
 def CrudFactory(
         model: SQLModel,
-        update_schema,
-        create_schema,
-        get_schema,
+        update_schema: Type[Schema],
+        create_schema: Type[Schema],
+        get_schema: Type[Schema],
 ) -> AbstractRepo:
     repo = type(
         "AbstractRepo",

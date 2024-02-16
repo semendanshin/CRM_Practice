@@ -16,12 +16,12 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class TMCOperationMoveUpdate(BaseModel):
-    tmc_id: Optional[int]
-    from_warehouse_id: Optional[int]
-    from_client_object_id: Optional[int]
-    to_warehouse_id: Optional[int]
-    to_client_object_id: Optional[int]
-    amount: Optional[int]
+    tmc_id: Optional[int] = None
+    from_warehouse_id: Optional[int] = None
+    from_client_object_id: Optional[int] = None
+    to_warehouse_id: Optional[int] = None
+    to_client_object_id: Optional[int] = None
+    amount: Optional[int] = None
 
 
 class TMCOperationMoveCreate(TMCOperationMoveUpdate):

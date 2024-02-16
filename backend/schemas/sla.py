@@ -10,7 +10,7 @@ created_at = Column(DateTime, default=datetime.now)
 
 
 class SLAUpdate(BaseModel):
-    file_id: Optional[str]
+    file_id: Optional[str] = None
 
 
 class SLACreate(SLAUpdate):

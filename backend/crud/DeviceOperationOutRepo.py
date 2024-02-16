@@ -7,8 +7,8 @@ from schemas.device_operation_out import DeviceOperationOutCreate, DeviceOperati
 class DeviceOperationOutRepo(
     CrudFactory(
         DeviceOperationOut,
-        DeviceOperationOutCreate,
         DeviceOperationOutUpdate,
+        DeviceOperationOutCreate,
         DeviceOperationOutResponse,
     )
 ):

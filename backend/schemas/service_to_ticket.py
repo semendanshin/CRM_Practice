@@ -16,10 +16,10 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class ServiceToTicketUpdate(BaseModel):
-    service_id: Optional[int]
-    amount: Optional[int]
-    price: Optional[float]
-    unit: Optional[str]
+    service_id: Optional[int] = None
+    amount: Optional[int] = None
+    price: Optional[float] = None
+    unit: Optional[str] = None
 
 
 class ServiceToTicketCreate(ServiceToTicketUpdate):

@@ -13,9 +13,9 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class DeviceOperationInUpdate(BaseModel):
-    description: Optional[str]
-    device_id: Optional[int]
-    warehouse_id: Optional[int]
+    description: Optional[str] = None
+    device_id: Optional[int] = None
+    warehouse_id: Optional[int] = None
 
 
 class DeviceOperationInCreate(DeviceOperationInUpdate):

@@ -12,8 +12,8 @@ updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class ClientTypeUpdate(BaseModel):
-    name: Optional[str]
-    sla_id: Optional[int]
+    name: Optional[str] = None
+    sla_id: Optional[int] = None
 
 
 class ClientTypeCreate(ClientTypeUpdate):

@@ -12,8 +12,8 @@ from schemas.ticket import TicketCreate, TicketUpdate, TicketResponse
 class TicketRepo(
     CrudFactory(
         Ticket,
-        TicketCreate,
         TicketUpdate,
+        TicketCreate,
         TicketResponse
     )
 ):

@@ -7,8 +7,8 @@ from schemas.employee import EmployeeCreate, EmployeeUpdate, EmployeeResponse
 class EmployeeRepo(
     CrudFactory(
         Employee,
-        EmployeeCreate,
         EmployeeUpdate,
+        EmployeeCreate,
         EmployeeResponse
     )
 ):

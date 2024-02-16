@@ -14,9 +14,9 @@ service_period_end: Mapped[date] = Column(DateTime)
 class ClientAgreementUpdate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    agreement_id: Optional[int]
-    service_period_start: Optional[datetime]
-    service_period_end: Optional[datetime]
+    agreement_id: Optional[int] = None
+    service_period_start: Optional[datetime] = None
+    service_period_end: Optional[datetime] = None
 
 
 class ClientAgreementCreate(ClientAgreementUpdate):

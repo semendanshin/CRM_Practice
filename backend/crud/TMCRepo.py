@@ -7,8 +7,8 @@ from schemas.tmc import TMCCreate, TMCUpdate, TMCResponse
 class TMCRepo(
     CrudFactory(
         TMC,
-        TMCCreate,
         TMCUpdate,
+        TMCCreate,
         TMCResponse
     )
 ):
