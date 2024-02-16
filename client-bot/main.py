@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, ConversationHandler
-from telegram.ext.filters import TEXT
+from telegram.ext.filters import TEXT, COMMAND
 
 from sqlalchemy.orm import Session
 
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     ticket_handler = ConversationHandler(
         entry_points=[CommandHandler('ticket', ask_ticket), ],
         states={
-            "asked_ticket": [MessageHandler(filters=TEXT, callback=ticket)]
+            "asked_ticket": [MessageHandler(filters=TEXT & ~COMMAND, callback=ticket)]
         },
         fallbacks=[
             CommandHandler('cancel', cancel)
