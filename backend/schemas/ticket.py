@@ -1,0 +1,44 @@
+from pydantic import BaseModel, ConfigDict
+from typing import List, Optional
+from datetime import datetime
+
+"""
+id = Column(Integer, primary_key=True)
+description = Column(String)
+status_id = Column(Integer, ForeignKey('ticket_statuses.id'))
+type_id = Column(Integer, ForeignKey('ticket_types.id'))
+client_id = Column(Integer, ForeignKey('clients.id'))
+employee_id = Column(Integer, ForeignKey('employees.id'))
+hours_spent = Column(Float)
+client_agreement_id = Column(Integer, ForeignKey('client_agreements.id'))
+created_at = Column(DateTime, default=datetime.now)
+updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+"""
+
+
+class TicketUpdate(BaseModel):
+    description: Optional[str]
+    status_id: Optional[int]
+    type_id: Optional[int]
+    client_id: Optional[int]
+    employee_id: Optional[int]
+    hours_spent: Optional[float]
+    client_agreement_id: Optional[int]
+
+
+class TicketCreate(TicketUpdate):
+    description: str
+    status_id: int
+    type_id: int
+    client_id: int
+    employee_id: int
+    hours_spent: float
+    client_agreement_id: int
+
+
+class TicketResponse(TicketCreate):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    created_at: datetime
+    updated_at: datetime

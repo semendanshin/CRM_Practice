@@ -8,7 +8,7 @@ from db.models import Client, BotAuthorization
 
 from .exceptions import TokenEmptyException, TokenNotFoundException
 
-from crud import bot_auth_repo
+from crud import BotAuthRepo, ClientRepo
 
 from uuid import uuid4
 
@@ -25,21 +25,23 @@ async def check_token(
         raise TokenEmptyException
 
     # find BotAuthorization by token and return Client with same id
-    bot_authorization = await bot_auth_repo.get_by_token(session, token)
-
-    await session.refresh(bot_authorization, attribute_names=['client'])
+    bot_authorization = await BotAuthRepo.get_by_token(session, token)
 
     if bot_authorization is None:
         raise TokenNotFoundException
 
-    return bot_authorization.client
+    print(bot_authorization.client_id)
+
+    client = await ClientRepo.get(session, bot_authorization.client_id)
+
+    return client
 
 
 async def create_token(
         client_id: int,
         session: AsyncSession, ) -> BotAuthorization:
 
-    instance = await bot_auth_repo.get_by_client_id(session=session, client_id=client_id)
+    instance = await BotAuthRepo.get_by_client_id(session=session, client_id=client_id)
 
     token = str(uuid4())
     # logger.info(token)
@@ -49,15 +51,13 @@ async def create_token(
 
     if instance:
         # print('updating')
-        await bot_auth_repo.update(
+        instance = await BotAuthRepo.update(
             session=session,
             record_id=instance.id,
             token=token,
         )
     else:
-        instance = await bot_auth_repo.create(session=session, client_id=client_id, token=token)
-
-    await session.refresh(instance, attribute_names=['token'])
+        instance = await BotAuthRepo.create(session=session, client_id=client_id, token=token)
 
     return instance
 

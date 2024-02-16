@@ -1,19 +1,7 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
-"""
-
-class Authorization(Base):
-    __tablename__ = 'authorizations'
-
-    id = Column(Integer, primary_key=True)
-    access_token = Column(String)
-    refresh_token = Column(String)
-    created_at = Column(DateTime, default=datetime.now)
-    expired_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
-
-"""
+from pydantic import BaseModel, ConfigDict
 
 
 class AuthorizationUpdate(BaseModel):

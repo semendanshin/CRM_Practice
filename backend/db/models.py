@@ -5,11 +5,12 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, date
 
 from sqlalchemy.orm import Mapped
+from sqlalchemy.ext.asyncio import AsyncAttrs
 
 Base = declarative_base()
 
 
-class TicketType(Base):
+class TicketType(Base, AsyncAttrs):
     __tablename__ = 'ticket_types'
 
     id = Column(Integer, primary_key=True)
@@ -19,10 +20,8 @@ class TicketType(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    ticket = relationship('Ticket', back_populates='ticket_type')
 
-
-class TicketStatus(Base):
+class TicketStatus(Base, AsyncAttrs):
     __tablename__ = 'ticket_statuses'
 
     id = Column(Integer, primary_key=True)
@@ -30,10 +29,8 @@ class TicketStatus(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    ticket = relationship('Ticket', back_populates='ticket_status')
 
-
-class Position(Base):
+class Position(Base, AsyncAttrs):
     __tablename__ = 'positions'
 
     id = Column(Integer, primary_key=True)
@@ -41,10 +38,8 @@ class Position(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    employee = relationship('Employee', back_populates='position')
 
-
-class Group(Base):
+class Group(Base, AsyncAttrs):
     __tablename__ = 'groups'
 
     id = Column(Integer, primary_key=True)
@@ -52,10 +47,8 @@ class Group(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    employee = relationship('Employee', back_populates='group')
 
-
-class Employee(Base):
+class Employee(Base, AsyncAttrs):
     __tablename__ = 'employees'
 
     id = Column(Integer, primary_key=True)
@@ -69,22 +62,16 @@ class Employee(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    position = relationship('Position', back_populates='employee')
-    group = relationship('Group', back_populates='employee')
-    ticket = relationship('Ticket', back_populates='employee')
 
-
-class SLA(Base):
+class SLA(Base, AsyncAttrs):
     __tablename__ = 'slas'
 
     id = Column(Integer, primary_key=True)
     file_id = Column(String)
     created_at = Column(DateTime, default=datetime.now)
 
-    client_type = relationship('ClientType', back_populates='sla')
 
-
-class Agreement(Base):
+class Agreement(Base, AsyncAttrs):
     __tablename__ = 'agreements'
 
     id = Column(Integer, primary_key=True)
@@ -92,10 +79,8 @@ class Agreement(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    client = relationship('Client', back_populates='agreement')
 
-
-class ClientType(Base):
+class ClientType(Base, AsyncAttrs):
     __tablename__ = 'client_types'
 
     id = Column(Integer, primary_key=True)
@@ -104,11 +89,8 @@ class ClientType(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    clients = relationship('Client', back_populates='client_type')
-    sla = relationship('SLA', back_populates='client_type')
 
-
-class ClientPaymentStatus(Base):
+class ClientPaymentStatus(Base, AsyncAttrs):
     __tablename__ = 'client_payment_statuses'
 
     id = Column(Integer, primary_key=True)
@@ -116,10 +98,8 @@ class ClientPaymentStatus(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    client = relationship('Client', back_populates='client_payment_status')
 
-
-class Client(Base):
+class Client(Base, AsyncAttrs):
     __tablename__ = 'clients'
     __tableargs__ = [
         CheckConstraint('manager != observer', name='manager_observer_check')
@@ -137,17 +117,8 @@ class Client(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    employee = relationship('Employee', 'client')
-    agreement = relationship('Agreement', 'client')
-    client_type = relationship('ClientType', 'client')
-    client_payment_status = relationship('ClientPaymentStatus', 'client')
-    client_employee = relationship('ClientEmployee', back_populates='client')
-    ticket = relationship('Ticket', back_populates='client')
-    client_object = relationship('ClientObject', back_populates='client')
-    warehouse = relationship('Warehouse', back_populates='client')
 
-
-class ClientEmployee(Base):
+class ClientEmployee(Base, AsyncAttrs):
     __tablename__ = 'client_employees'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -161,10 +132,8 @@ class ClientEmployee(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    client = relationship('Client', back_populates='client_employee')
 
-
-class Observer(Base):
+class Observer(Base, AsyncAttrs):
     __tablename__ = 'observers'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -173,11 +142,8 @@ class Observer(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    ticket = relationship('Ticket', back_populates='observer')
-    employee = relationship('Employee', back_populates='observer')
 
-
-class ClientAgreement(Base):
+class ClientAgreement(Base, AsyncAttrs):
     __tablename__ = 'client_agreements'
     __tableargs__ = [
         CheckConstraint('service_period_start < service_period_end', name='service_period_check'),
@@ -188,11 +154,8 @@ class ClientAgreement(Base):
     service_period_start: Mapped[date] = Column(DateTime)
     service_period_end: Mapped[date] = Column(DateTime)
 
-    agreement = relationship('Agreement', back_populates='client_agreement')
-    ticket = relationship('Ticket', back_populates='client_agreement')
 
-
-class Ticket(Base):
+class Ticket(Base, AsyncAttrs):
     __tablename__ = 'tickets'
 
     # Добавить время реакции (реальное и ожидаемое). Добавить время закрытия тикета
@@ -208,17 +171,8 @@ class Ticket(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    status = relationship('TicketStatus', back_populates='ticket')
-    ticket_type = relationship('TicketType', back_populates='ticket')
-    client = relationship('Client', back_populates='ticket')
-    employee = relationship('Employee', back_populates='ticket')
-    client_agreement = relationship('ClientAgreement', back_populates='ticket')
-    ticket_task = relationship('TicketTask', back_populates='ticket')
-    attachment = relationship('Attachment', back_populates='ticket')
-    service_to_ticket = relationship('ServiceToTicket', back_populates='ticket')
 
-
-class TicketTaskStatuses(Base):
+class TicketTaskStatus(Base, AsyncAttrs):
     __tablename__ = 'ticket_task_statuses'
 
     id = Column(Integer, primary_key=True)
@@ -226,10 +180,8 @@ class TicketTaskStatuses(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    ticket_task = relationship('TicketTask', back_populates='ticket_tast_statuses')
 
-
-class TicketTask(Base):
+class TicketTask(Base, AsyncAttrs):
     __tablename__ = 'ticket_tasks'
 
     id = Column(Integer, primary_key=True)
@@ -239,11 +191,9 @@ class TicketTask(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    ticket_task_statuses = relationship('TicketTaskStatuses', back_populates='ticket_task')
-    ticket = relationship('Ticket', 'ticket_task')
 
 
-class Attachment(Base):
+class Attachment(Base, AsyncAttrs):
     __tablename__ = 'attachments'
 
     id = Column(Integer, primary_key=True)
@@ -252,11 +202,8 @@ class Attachment(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    ticket = relationship('Ticket', back_populates='attachment')
 
-
-
-class ClientObject(Base):
+class ClientObject(Base, AsyncAttrs):
     __tablename__ = 'client_objects'
 
     id = Column(Integer, primary_key=True)
@@ -267,18 +214,8 @@ class ClientObject(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    client = relationship('Client', back_populates='client_object')
-    devices = relationship('Devices', back_populates='client_object')
-    device_operation_move_from = relationship('DeviceOperationMove')
-    device_operation_move_to = relationship('DeviceOperationMove')
-    device_operation_out_from = relationship('DeviceOperationOut')
-    device_operation_out_to = relationship('DeviceOperationOut')
-    from_tmc_operation_move = relationship('TMCOperationMove')
-    to_tmc_operation_move = relationship('TMCOperationMove')
-    from_tmc_operation_out = relationship('TMCOperationOut')
 
-
-class Warehouse(Base):
+class Warehouse(Base, AsyncAttrs):
     __tablename__ = 'warehouses'
 
     id = Column(Integer, primary_key=True)
@@ -289,19 +226,8 @@ class Warehouse(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    client = relationship('Client', back_populates='warehouse')
-    devices = relationship('Devices', back_populates='warehouse')
-    devices_operation_in = relationship('DevicesOperationIn')
-    from_devices_operation_move = relationship('DeviceOperationMove')
-    to_devices_operation_move = relationship('DeviceOperationMove')
-    devices_operation_out_from = relationship('DeviceOperationOut')
-    tmc_operation_in = relationship('TMCOperationIn')
-    from_tmc_operation_move = relationship('TMCOperationMove')
-    to_tmc_operation_move = relationship('TMCOperationMove')
-    from_tmc_operation_out = relationship('TMCOperationOut')
 
-
-class Devices(Base):
+class Devices(Base, AsyncAttrs):
     __tablename__ = 'devices'
     __tableargs__ = [
         CheckConstraint('client_object_id is not null or warehouse is not null',
@@ -315,13 +241,8 @@ class Devices(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    client_object = relationship('ClientObject', back_populates='devices')
-    warehouse = relationship('Warehouse', back_populates='devices')
-    devices_operation_in = relationship('DevicesOperationIn', back_populates='devices')
-    devices_operation_out = relationship('DeviceOperationOut', back_populates='devices')
 
-
-class DevicesOperationIn(Base):
+class DevicesOperationIn(Base, AsyncAttrs):
     __tablename__ = 'devices_operations_in'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -331,11 +252,8 @@ class DevicesOperationIn(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    devices = relationship('Devices')
-    warehouse = relationship('Warehouse')
 
-
-class DeviceOperationMove(Base):
+class DeviceOperationMove(Base, AsyncAttrs):
     __tablename__ = 'devices_operations_move'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -349,14 +267,8 @@ class DeviceOperationMove(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    devices = relationship('Devices', 'device_operation_move')
-    from_warehouse = relationship('Warehouse')
-    from_client_object = relationship('ClientObject')
-    to_warehouse = relationship('Warehouse')
-    to_client_object = relationship('ClientObject')
 
-
-class DeviceOperationOut(Base):
+class DeviceOperationOut(Base, AsyncAttrs):
     __tablename__ = 'devices_operations_out'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -369,12 +281,8 @@ class DeviceOperationOut(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    device = relationship('Devices')
-    from_warehouse = relationship('Warehouse')
-    from_client_object = relationship('ClientObject')
 
-
-class TMC(Base):
+class TMC(Base, AsyncAttrs):
     __tablename__ = 'tmc'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -383,12 +291,8 @@ class TMC(Base):
     created_at: Mapped[datetime] = Column(DateTime, default=datetime.now)
     updated_at: Mapped[str] = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    tmc_operation_in = relationship('TMCOperationIn', back_populates='tmc')
-    tmc_operation_move = relationship('TMCOperationMove', back_populates='tmc')
-    tmc_operation_out = relationship('TMCOperationOut', back_populates='tmc')
 
-
-class TMCOperationIn(Base):
+class TMCOperationIn(Base, AsyncAttrs):
     __tablename__ = 'tmc_operations_in'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -398,11 +302,8 @@ class TMCOperationIn(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    tmc = relationship('TMC', back_populates='tmc_operation_in')
-    warehouse = relationship('Warehouse')
 
-
-class TMCOperationMove(Base):
+class TMCOperationMove(Base, AsyncAttrs):
     __tablename__ = 'tmc_operations_move'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -415,14 +316,8 @@ class TMCOperationMove(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    tmc = relationship('TMC', back_populates='tmc_operation_move')
-    from_warehouse = relationship('Warehouse')
-    from_client_object = relationship('ClientObject')
-    to_warehouse = relationship('Warehouse')
-    to_client_object = relationship('ClientObject')
 
-
-class TMCOperationOut(Base):
+class TMCOperationOut(Base, AsyncAttrs):
     __tablename__ = 'tmc_operations_out'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -433,12 +328,8 @@ class TMCOperationOut(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    tmc = relationship('TMC', back_populates='tmc_operation_out')
-    from_warehouse = relationship('Warehouse')
-    from_client_object = relationship('ClientObject')
 
-
-class Service(Base):
+class Service(Base, AsyncAttrs):
     __tablename__ = 'services'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -447,10 +338,8 @@ class Service(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    service_to_ticket = relationship('ServiceToTicket', back_populates='service')
 
-
-class ServiceToTicket(Base):
+class ServiceToTicket(Base, AsyncAttrs):
     __tablename__ = 'service_to_ticket'
 
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -462,11 +351,8 @@ class ServiceToTicket(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    service = relationship('Service', back_populates='service_to_ticket')
-    ticket = relationship('Tickets', back_populates='service_to_ticket')
 
-
-class Instruction(Base):
+class Instruction(Base, AsyncAttrs):
     __tablename__ = 'instructions'
 
     id = Column(Integer, primary_key=True)
@@ -476,10 +362,8 @@ class Instruction(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    instruction_attachment = relationship('InstructionAttachment', back_populates='instruction')
 
-
-class InstructionAttachment(Base):
+class InstructionAttachment(Base, AsyncAttrs):
     __tablename__ = 'instruction_attachments'
 
     id = Column(Integer, primary_key=True)
@@ -488,10 +372,8 @@ class InstructionAttachment(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
-    instruction = relationship('Instruction', back_populates='instruction_attachment')
 
-
-class Authorization(Base):
+class Authorization(Base, AsyncAttrs):
     __tablename__ = 'authorizations'
 
     id = Column(Integer, primary_key=True)
@@ -500,11 +382,10 @@ class Authorization(Base):
     created_at = Column(DateTime, default=datetime.now)
 
 
-class BotAuthorization(Base):
+class BotAuthorization(Base, AsyncAttrs):
     __tablename__ = 'bot_authorizations'
 
     id = Column(Integer, primary_key=True)
     client_id = Column(Integer, ForeignKey('clients.id'))
-    client = relationship('Client')
     token = Column(String, unique=True)
     created_at = Column(DateTime, default=datetime.now)

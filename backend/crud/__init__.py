@@ -1,77 +1,66 @@
-from typing import Sequence
-
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from db.models import Authorization, Employee, BotAuthorization, Ticket
-from .CrudFactory import CrudFactory
-
-
-class AuthRepo(CrudFactory(Authorization)):
-    @classmethod
-    async def get_by_refresh_token(cls, session: AsyncSession, refresh_token) -> Authorization:
-        res = await session.execute(
-            cls.model.__table__.select().where(cls.model.refresh_token == refresh_token)
-        )
-        return res.scalar().first()
-    
-    @classmethod
-    async def get_by_user_id(cls, session: AsyncSession, user_id) -> Authorization:
-        res = await session.execute(
-            cls.model.__table__.select().where(cls.model.user_id == user_id)
-        )
-        return res.scalar().first()
-    
-    @classmethod
-    async def get_by_access_token(cls, session: AsyncSession, access_token) -> Authorization:
-        res = await session.execute(
-            cls.model.__table__.select().where(cls.model.access_token == access_token)
-        )
-        return res.scalar().first()
-
-    @classmethod
-    async def delete_by_user_id(cls, session: AsyncSession, user_id):
-        await session.execute(
-            cls.model.__table__.delete().where(cls.model.user_id == user_id)
-        )
-        await session.commit()
+from .AgreementRepo import AgreementRepo
+from .AttachmentRepo import AttachmentRepo
+from .AuthorizationRepo import AuthorizationRepo
+from .BotAuthRepo import BotAuthRepo
+from .ClientAgreementRepo import ClientAgreementRepo
+from .ClientEmployeeRepo import ClientEmployeeRepo
+from .ClientObjectRepo import ClientObjectRepo
+from .ClientPaymentStatusRepo import ClientPaymentStatusRepo
+from .ClientRepo import ClientRepo
+from .ClientTypeRepo import ClientTypeRepo
+from .DeviceOperationInRepo import DeviceOperationInRepo
+from .DeviceOperationOutRepo import DeviceOperationOutRepo
+from .DeviceOperationMoveRepo import DeviceOperationMoveRepo
+from .DeviceRepo import DeviceRepo
+from .EmployeeRepo import EmployeeRepo
+from .GroupRepo import GroupRepo
+from .InstructionAttachmentRepo import InstructionAttachmentRepo
+from .InstructionRepo import InstructionRepo
+from .ObserverRepo import ObserverRepo
+from .PositionRepo import PositionRepo
+from .ServiceRepo import ServiceRepo
+from .ServiceToTicketRepo import ServiceToTicketRepo
+from .SLARepo import SLARepo
+from .TicketTaskRepo import TicketTaskRepo
+from .TicketRepo import TicketRepo
+from .TicketTaskStatusRepo import TicketTaskStatusRepo
+from .TMCOperationInRepo import TMCOperationInRepo
+from .TMCOperationOutRepo import TMCOperationOutRepo
+from .TMCOperationMoveRepo import TMCOperationMoveRepo
+from .TMCRepo import TMCRepo
+from .WarehouseRepo import WarehouseRepo
 
 
-class BotAuthRepo(CrudFactory(BotAuthorization)):
-    @classmethod
-    async def get_by_token(cls, session: AsyncSession, token) -> BotAuthorization:
-        res = await session.execute(
-            select(cls.model).where(cls.model.token==token)
-        )
-        return res.scalar()
-
-    @classmethod
-    async def get_by_client_id(cls, session: AsyncSession, client_id) -> BotAuthorization:
-        res = await session.execute(
-            select(cls.model).where(cls.model.client_id==client_id)
-        )
-        return res.scalar()
-
-    @classmethod
-    async def delete_by_token(cls, session: AsyncSession, token):
-        await session.execute(
-            cls.model.__table__.delete().where(cls.model.token == token)
-        )
-        await session.commit()
-
-
-class TicketRepo(CrudFactory(Ticket)):
-    @classmethod
-    async def get_by_client_id(cls, session: AsyncSession, client_id: int) -> Sequence[Ticket]:
-        if not isinstance(client_id, int):
-            raise TypeError("client_id must be an integer")
-        res = await session.execute(
-            select(cls.model).where(cls.model.client_id == client_id)
-        )
-        return res.scalars().all()
-
-
-employee_repo = CrudFactory(Employee)
-auth_repo = AuthRepo
-bot_auth_repo = BotAuthRepo
-ticket_repo = TicketRepo
+__all__ = [
+    "AgreementRepo",
+    "AttachmentRepo",
+    "AuthorizationRepo",
+    "BotAuthRepo",
+    "ClientAgreementRepo",
+    "ClientEmployeeRepo",
+    "ClientObjectRepo",
+    "ClientPaymentStatusRepo",
+    "ClientRepo",
+    "ClientTypeRepo",
+    "DeviceOperationInRepo",
+    "DeviceOperationOutRepo",
+    "DeviceOperationMoveRepo",
+    "DeviceRepo",
+    "EmployeeRepo",
+    "GroupRepo",
+    "InstructionAttachmentRepo",
+    "InstructionRepo",
+    "ObserverRepo",
+    "PositionRepo",
+    "ServiceRepo",
+    "ServiceToTicketRepo",
+    "SLARepo",
+    "TicketTaskRepo",
+    "TicketRepo",
+    "TicketTaskStatusRepo",
+    "TMCOperationInRepo",
+    "TMCOperationOutRepo",
+    "TMCOperationMoveRepo",
+    "TMCRepo",
+    "WarehouseRepo",
+]

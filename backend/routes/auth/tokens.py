@@ -1,23 +1,21 @@
+import datetime
+from logging import getLogger
 from typing import Optional, Union
 
 import jwt
-import datetime
-
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.auth import AuthorizationCreate
+from config import config
+from crud import AuthorizationRepo, EmployeeRepo
+from db.models import Employee
 from routes.auth.exceptions import (
     TokenInvalidException,
     TokenExpiredException,
     TokenNotFoundException,
     TokenEmptyException,
 )
-from config import config
-from crud import auth_repo, employee_repo
-from db.models import Employee
-
-from logging import getLogger
+from schemas.authorization import AuthorizationCreate
 
 logger = getLogger(__name__)
 
@@ -28,8 +26,8 @@ class Tokens(BaseModel):
 
 
 async def create_tokens(session: AsyncSession,
-                  employee_id: int,
-                  received_tokens: Optional[Tokens] = None) -> Tokens:
+                        employee_id: int,
+                        received_tokens: Optional[Tokens] = None) -> Tokens:
     """
     Generate tokens for user
     :param session:
@@ -45,10 +43,10 @@ async def create_tokens(session: AsyncSession,
     try:
         user = await check_token(session, received_tokens=received_tokens)
     except Union[TokenEmptyException, TokenNotFoundException]:
-        user = await employee_repo.get_by_id(session, employee_id)
+        user = await EmployeeRepo.get(session, employee_id)
     except Union[TokenInvalidException, TokenExpiredException]:
-        user = await employee_repo.get_by_id(session, employee_id)
-        await auth_repo.delete_by_user_id(session, user.id)
+        user = await EmployeeRepo.get(session, employee_id)
+        await AuthorizationRepo.delete_by_user_id(session, user.id)
 
     tokens = AuthorizationCreate(
         access=jwt.encode(
@@ -72,7 +70,7 @@ async def create_tokens(session: AsyncSession,
         user_id=user.id
     )
 
-    await auth_repo.create(
+    await AuthorizationRepo.create(
         session,
         tokens
     )
@@ -94,7 +92,7 @@ async def refresh_tokens(session: AsyncSession,
     if not received_tokens:
         raise TokenEmptyException
 
-    exist_token = await auth_repo.get_by_refresh_token(
+    exist_token = await AuthorizationRepo.get_by_refresh_token(
         session,
         received_tokens.refresh_token
     )
@@ -114,7 +112,7 @@ async def refresh_tokens(session: AsyncSession,
     if datetime.datetime.strptime(refresh['expires_on'], '%Y-%m-%d %H:%M:%S.%f') < datetime.datetime.utcnow():
         raise TokenExpiredException
 
-    user = await employee_repo.get(session, refresh['employee_id'])
+    user = await EmployeeRepo.get(session, refresh['employee_id'])
 
     tokens = {
         'access': jwt.encode(
@@ -144,7 +142,7 @@ async def refresh_tokens(session: AsyncSession,
 
 
 async def check_token(session: AsyncSession,
-                received_tokens: Optional[Tokens] = None) -> Employee:
+                      received_tokens: Optional[Tokens] = None) -> Employee:
     """
     Check token
     :param session:
@@ -161,8 +159,8 @@ async def check_token(session: AsyncSession,
         logger.error(f'Invalid token: {e}')
         raise TokenInvalidException('Invalid token')
 
-    user = await employee_repo.get(session, access['employee_id'])
-    exist_token = await auth_repo.get_by_user_id(session, user.id)
+    user = await EmployeeRepo.get(session, access['employee_id'])
+    exist_token = await AuthorizationRepo.get_by_user_id(session, user.id)
 
     if not exist_token:
         raise

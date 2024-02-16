@@ -1,30 +1,42 @@
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from .CrudFactory import  CrudFactory
 from db.models import Authorization
-import CrudFactory
+from schemas.authorization import AuthorizationCreate, AuthorizationUpdate, AuthorizationResponse
 
 
-class ClientRepo(CrudFactory.CrudFactory(Authorization)):
+class AuthorizationRepo(
+    CrudFactory(
+        Authorization,
+        AuthorizationUpdate,
+        AuthorizationCreate,
+        AuthorizationResponse,
+    )
+):
     @classmethod
-    async def get_authorization_by_id(cls, session: AsyncSession, record_id: int) -> "Authorization":
-        res = await session.execute(select(cls.Authorization).where(Authorization.id == record_id))
+    async def get_by_refresh_token(cls, session: AsyncSession, refresh_token) -> AuthorizationResponse:
+        res = await session.execute(
+            cls.model.__table__.select().where(cls.model.refresh_token == refresh_token)
+        )
         return res.scalar().first()
 
     @classmethod
-    async def get_all_authorizations(cls, session: AsyncSession) -> "Authorization":
-        res = await session.execute(select(cls.Authorization))
-        return res.scalar().all()
+    async def get_by_user_id(cls, session: AsyncSession, user_id) -> AuthorizationResponse:
+        res = await session.execute(
+            cls.model.__table__.select().where(cls.model.user_id == user_id)
+        )
+        return res.scalar().first()
 
     @classmethod
-    async def create_authorization(cls, session: AsyncSession, **kwargs) -> "Authorization":
-        instance = cls.Authorization(**kwargs)
-        session.add(instance)
-        await session.commit()
-        return instance
+    async def get_by_access_token(cls, session: AsyncSession, access_token) -> AuthorizationResponse:
+        res = await session.execute(
+            cls.model.__table__.select().where(cls.model.access_token == access_token)
+        )
+        return res.scalar().first()
 
     @classmethod
-    async def delete_authorization(cls, session: AsyncSession, authorization_id: int):
-        res = await session.execute(select(Authorization).where(Authorization.id == authorization_id))
-        authorization_to_delete = res.scalar_one()
-        await session.delete(authorization_to_delete)
+    async def delete_by_user_id(cls, session: AsyncSession, user_id):
+        await session.execute(
+            cls.model.__table__.delete().where(cls.model.user_id == user_id)
+        )
         await session.commit()

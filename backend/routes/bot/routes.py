@@ -2,13 +2,14 @@ from fastapi import Depends, HTTPException
 from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from crud import ticket_repo
+from crud import TicketRepo
 from .tokens import check_token, create_token
 from db import get_session
 
 from .exceptions import TokenEmptyException, TokenNotFoundException
 
-from schemas.bot_auth import BotAuthorizationResponse, TicketResponse
+from schemas.bot_authorization import BotAuthorizationResponse
+from schemas.ticket import TicketResponse
 
 router = APIRouter(
     prefix="/bot",
@@ -16,7 +17,6 @@ router = APIRouter(
 )
 
 
-@router.post("/login")
 async def login_user(
         token: str,
         session: AsyncSession = Depends(get_session)
@@ -27,6 +27,7 @@ async def login_user(
             session,
         )
         return BotAuthorizationResponse(
+            token=token,
             client_id=client.id,
         )
     except TokenEmptyException:
@@ -48,18 +49,16 @@ async def token(
     return generated_token.token
 
 
-@router.get("/tickets")
+@router.get("/tickets", response_model=list[TicketResponse])
 async def get_tickets(
         client_id: BotAuthorizationResponse = Depends(login_user),
         session: AsyncSession = Depends(get_session),
 ):
-    res = await ticket_repo.get_by_client_id(
+    res = await TicketRepo.get_by_client_id(
         session,
         client_id.client_id,
     )
-    for ticket in res:
-        await session.refresh(ticket, attribute_names=['status'])
-    return [TicketResponse.model_validate(ticket) for ticket in res]
+    return res
 
 
 @router.post("/ticket")
@@ -67,7 +66,7 @@ async def create_ticket(
         client_id: BotAuthorizationResponse = Depends(login_user),
         session: AsyncSession = Depends(get_session),
 ):
-    ticket = await ticket_repo.create(
+    ticket = await TicketRepo.create(
         session,
         client_id.client_id,
     )
