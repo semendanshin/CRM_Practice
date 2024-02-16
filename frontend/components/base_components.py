@@ -56,6 +56,12 @@ class SideMenuOption:
             BaseButton(button_text, on_click=lambda: ui.open(button_href)).classes(add='button')
 
 
+class SideButton:
+    def __init__(self, button_text: str,):
+        with BaseDiv().classes(add='option-container'):
+            BaseButton(button_text).classes(add='two')
+
+
 class BaseLine(BaseDiv):
     def __init__(self):
         super().__init__()
