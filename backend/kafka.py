@@ -96,7 +96,7 @@ async def create_ticket(message: Message):
 
     client_id = bot_auth.client_id
 
-    type_str = await Classificator.classify(message.description)
+    type_str = await Classificator.classify(message.description, classifier='kneighbours')
     logger.info(f"Classificator response: {type_str}")
 
     types = await TicketTypeRepo.get_filtered_by(
