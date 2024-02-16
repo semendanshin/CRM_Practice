@@ -22,11 +22,11 @@ from config import TOKEN
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.DEBUG
+    level=logging.INFO
 )
 
 logger = logging.getLogger(__name__)
-logging.getLogger('httpx').setLevel(logging.WARNING) #ЧТОБЫ ЛИШНЯЯ ИНФА НЕ ПЕЧАТАЛАСЬ
+logging.getLogger('httpx').setLevel(logging.WARNING)  # ЧТОБЫ ЛИШНЯЯ ИНФА НЕ ПЕЧАТАЛАСЬ
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -51,8 +51,6 @@ async def ask_ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def ticket(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print("tired")
-    logger.critical(111111111111111111111111111111111111111111111111111)
     ticket_description = update.message.text
     with Session(engine) as session:
         token = get_token(session=session, telegram_id=update.effective_user.id)

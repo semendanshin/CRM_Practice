@@ -15,13 +15,12 @@ class TicketRepo:
     @classmethod
     async def _post_to_queue(cls, data: dict) -> None:
         producer = AIOKafkaProducer(
-            bootstrap_servers=cls.KAFKA_URL)  # объект который изготавливает сообщения кафки
+            bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)  # объект который изготавливает сообщения кафки
         await producer.start()
         try:
-            value = {'data': data}
-            print(f'Sending message with value: {value}')
-            value_json = json.dumps(value).encode('utf-8')  # преобразуем value в json строку
-            await producer.send_and_wait(KAFKA_TOPIC, bytes(value_json))  # отправляет сообщение
+            print(f'Sending message with value: {data}')
+            value_json = json.dumps(data).encode('utf-8')  # преобразуем value в json строку
+            await producer.send_and_wait(KAFKA_TOPIC, value_json)  # отправляет сообщение
         finally:
             # wait for all pending messages to be delivered or expire.
             await producer.stop()
