@@ -34,22 +34,21 @@ def employees_page() -> None:
         with BaseDiv().classes(add='evenly-spaced-column-container gap-flex-elements').style(
                 "justify-content: flex-start;"):
             with BaseDiv().classes(add='evenly-spaced-container').style(
-                    ("justify-content: space-evenly;flex-wrap: wrap;align-content: left;overflow: auto;max-height: 100%;"
-                     "row-gap: 10px;column-gap: 10px;max-width: 100%;")
+                    (
+                    "justify-content: space-evenly;flex-wrap: wrap;align-content: left;overflow: auto;max-height: 100%;"
+                    "column-gap: 10px;max-width: 100%;")
             ):
                 for status, color in statuses:
                     with BaseDiv().classes(add='evenly-spaced-column-container'
                                            ).style(
-                        "min-width: 100;justify-content: space-around;height: fit-content;gap: 10px;max-height: 40%;"
+                        "min-width: 100;justify-content: space-around;height: fit-content;gap: 10px;max-height: 48%;"
                     ):
                         with BaseDiv().style('height: auto;display: contents;'):
                             BaseLabel(status).classes(add='label-with-background').style(f'background-color: {color};')
-                        with BaseDiv().style('height: auto;display: contents;'):
-                            ui.separator()
                         with BaseDiv().classes(add='evenly-spaced-column-container').style(
                                 'justify-content: space-around;overflow: hidden;max-height: 40%;'):
                             with BaseDiv().classes(add='evenly-spaced-column-container').style(
-                                    'justify-content: flex-start;overflow: auto;gap: 10px;max-height: 40%;'):
+                                    'justify-content: flex-start;overflow: auto;gap: 10px;'):
                                 for _ in range(50):
                                     with BaseCard():
                                         with BaseDiv().classes(add='evenly-spaced-container'):
