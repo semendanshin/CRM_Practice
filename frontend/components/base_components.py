@@ -2,6 +2,7 @@ from typing import Callable
 
 from nicegui import ui
 
+
 from fastapi.responses import RedirectResponse
 
 

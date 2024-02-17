@@ -1,15 +1,15 @@
-input {
-    height: 30px;
-    width: 100%;
-    box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.25);
-    border: 0.5px solid coral;
-    background-color: #DCDCDC;
-    text-indent: 10px;
-    flex-grow: 0;
-    flex-shrink: 1;
+.input {
+    height: 30px !important;
+    width: 100% !important;
+    box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.25) !important;
+    border: 0.5px solid coral !important;
+    background-color: #DCDCDC !important;
+    text-indent: 10px !important;
+    flex-grow: 0 !important;
+    flex-shrink: 1 !important;
 }
 
-button {
+.button {
     border: 1px solid black;
     border-radius: 12px;
     text-transform: none;
