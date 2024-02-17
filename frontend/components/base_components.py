@@ -114,3 +114,9 @@ class IconWithLink(BaseLink, BaseIcon):
         with BaseDiv():
             with BaseLink(target=target):
                 BaseIcon(image_name=image_name)
+
+
+class BaseCard(ui.card):
+    def __init__(self):
+        super().__init__()
+        self.tag = 'card'

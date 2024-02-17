@@ -20,7 +20,7 @@ def default_page_template(
         styles.append(style)
     add_styles(ui, *styles)
 
-    with BaseDiv().style("width: 98vw; height: 82vh;position: absolute;top: 10px;right: 0;bottom: 0;left: 15px;max-height: 99vh;"):
+    with BaseDiv().style("width: 98vw; height: 81vh;position: absolute;top: 10px;right: 0;bottom: 0;left: 15px;max-height: 99vh;"):
         with BaseDiv().classes(add='index-container gap-flex-elements'):
             with BaseDiv().classes().style('display: flex'):  # Site name
                 CRMNameLabel().style('align-self: flex-start;')
@@ -47,7 +47,7 @@ def default_page_template(
             ui.separator()
 
             with BaseDiv().classes(add='center-container').style("justify-content: space-around;"):  # Side + View
-                with BaseDiv().classes(add='evenly-spaced-column-container').style("min-width: 100;"):  # Side menu
+                with BaseDiv().classes(add='evenly-spaced-column-container').style("min-width: 100;column-gap: 15px;justift-content: space-around"):  # Side menu
                     with BaseDiv().classes(add='options-container'):  # Top group
                         with BaseDiv().classes(add='option-container'):
                             IconWithLink(target='/', image_name='static/overview.png')

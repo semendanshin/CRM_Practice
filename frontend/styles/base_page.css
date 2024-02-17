@@ -138,7 +138,6 @@ img {
     display: inline-flex;
     justify-content: space-around;
     flex-direction: row;
-    max-height: 8%;
 }
 
 .evenly-spaced-column-container {
