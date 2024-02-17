@@ -2,6 +2,7 @@ from typing import Callable
 
 from nicegui import ui
 
+
 from fastapi.responses import RedirectResponse
 
 
@@ -51,8 +52,8 @@ class BaseIcon(ui.image):
 
 class SideMenuOption:
     def __init__(self, image_name: str, button_text: str, button_href: str = ''):
-        with BaseDiv().classes(add='option-container'):
-            BaseIcon(image_name)
+        with BaseDiv().classes(add='center-container'):
+            BaseIcon(image_name).style('height: 20px; width: 20px; justify-content: center')
             BaseButton(button_text, on_click=lambda: ui.open(button_href)).classes(add='button')
 
 
@@ -114,3 +115,9 @@ class IconWithLink(BaseLink, BaseIcon):
         with BaseDiv():
             with BaseLink(target=target):
                 BaseIcon(image_name=image_name)
+
+
+class BaseCard(ui.card):
+    def __init__(self):
+        super().__init__()
+        self.tag = 'card'

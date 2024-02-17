@@ -18,10 +18,14 @@ def main_page() -> None:
 
             with BaseDiv().classes(add='options-container'):
                 SideMenuOption(image_name='static/overview.png', button_text='Overview', button_href='/')
-                SideMenuOption(image_name='static/storage.png', button_text='Объекты и склады', button_href='/storage')
-                SideMenuOption(image_name='static/customers.png', button_text='Сотрудники', button_href='/employees')
-                SideMenuOption(image_name='static/employees.png', button_text='Клиенты', button_href='/customers')
-                SideMenuOption(image_name='static/application.png', button_text='Заявки', button_href='/application')
+                with BaseDiv():
+                    SideMenuOption(image_name='static/storage.png', button_text='Объекты и склады', button_href='/storage')
+                with BaseDiv():
+                    SideMenuOption(image_name='static/customers.png', button_text='Сотрудники', button_href='/employees')
+                with BaseDiv():
+                    SideMenuOption(image_name='static/employees.png', button_text='Клиенты', button_href='/customers')
+                with BaseDiv():
+                    SideMenuOption(image_name='static/application.png', button_text='Заявки', button_href='/application')
 
             with BaseDiv().classes(add='bottomoptions-container'):
                 SideButton(button_text='Новое добавление')
