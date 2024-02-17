@@ -58,6 +58,10 @@ class ApplicationStyle(Style):
     file = 'application.css'
 
 
+class BasePageStyle(Style):
+    file = 'base_page.css'
+
+
 def add_styles(ui, *args) -> None:
     ui.add_head_html(
         Fonts.get_fonts()
