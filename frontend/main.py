@@ -8,8 +8,6 @@ from middlewares import AuthMiddleware
 from endpoints import index_router, auth_router, subpage_router, registr_router, storage_router, application_router, customers_router, employees_router
 
 
-
-
 app.add_middleware(AuthMiddleware)
 
 app.include_router(index_router)

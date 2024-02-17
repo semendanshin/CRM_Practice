@@ -2,7 +2,7 @@ from nicegui import app, ui
 
 from nicegui import APIRouter
 
-from components import CRMNameLabel, BaseLabel, SideMenuOption, BaseIcon, BaseInput, BaseDiv
+from components import CRMNameLabel, BaseLabel, SideMenuOption, BaseIcon, BaseInput, BaseDiv, SideButton, IconWithLink
 from styles import Style, Fonts, add_styles, IndexStyle
 
 router = APIRouter()
@@ -14,15 +14,16 @@ def main_page() -> None:
 
     with BaseDiv().classes(add='center-container'):
         with BaseDiv().classes(add='index-container'):
+            CRMNameLabel()
+
             with BaseDiv().classes(add='options-container'):
-                CRMNameLabel()
                 SideMenuOption(image_name='static/overview.png', button_text='Overview', button_href='/')
                 SideMenuOption(image_name='static/storage.png', button_text='Объекты и склады', button_href='/storage')
                 SideMenuOption(image_name='static/customers.png', button_text='Сотрудники', button_href='/employees')
                 SideMenuOption(image_name='static/employees.png', button_text='Клиенты', button_href='/customers')
                 SideMenuOption(image_name='static/application.png', button_text='Заявки', button_href='/application')
 
-            with BaseDiv().classes(add='options-container'):
+            with BaseDiv().classes(add='bottomoptions-container'):
                 SideButton(button_text='Новое добавление')
                 SideMenuOption(image_name='static/settings.png', button_text='Настройки')
                 SideMenuOption(image_name='static/instruction.png', button_text='Инструкции')
