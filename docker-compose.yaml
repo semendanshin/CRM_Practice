@@ -46,14 +46,14 @@ services:
     depends_on:
       - backend
       - ml-service
-#  frontend:
-#    build:
-#      context: ./frontend
-#      dockerfile: Dockerfile
-#    container_name: frontend
-#    ports:
-#      - "80:8000"
-#    env_file:
-#      - ./frontend/.env
-#    restart: unless-stopped
-#    command: []
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "8060:8000"
+    env_file:
+      - ./frontend/.env
+    restart: unless-stopped
+    command: ["python", "main.py"]

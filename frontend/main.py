@@ -21,7 +21,7 @@ app.include_router(application_router)
 
 app.add_static_files(url_path='/static', local_directory='static')
 
-ui.run(storage_secret=STORAGE_SECRET, show=False, port=8060)
+ui.run(storage_secret=STORAGE_SECRET, show=False, port=8000, host='0.0.0.0')
 
 
 pprint(core.app.routes)
