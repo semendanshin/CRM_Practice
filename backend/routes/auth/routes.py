@@ -24,6 +24,16 @@ def update_tokens_in_cookies(response: Response, tokens: Tokens):
     response.set_cookie(key="refresh_token", value=tokens.refresh_token, expires=config.REFRESH_EXPIRE_DAYS * 24 * 60 * 60)
 
 
+def jwt_cookie_wrapper(
+        access_token: Annotated[str, Cookie(default="")],
+        refresh_token: Annotated[str, Cookie(default="")],
+):
+    return Tokens(
+        access_token=access_token,
+        refresh_token=refresh_token
+    )
+
+
 @router.post("/create")
 async def create_tokens_route(
         employee_id: int,
@@ -42,17 +52,13 @@ async def create_tokens_route(
 
 @router.post("/check")
 async def check_tokens_route(
-        access_token: str = Cookie(default=""),
-        refresh_token: str = Cookie(default=""),
+        tokens: Tokens = Depends(jwt_cookie_wrapper),
         session: AsyncSession = Depends(get_session)
 ):
     try:
         return await check_token(
             session,
-            Tokens(
-                access_token=access_token,
-                refresh_token=refresh_token
-            )
+            tokens
         )
     except TokenEmptyException:
         raise HTTPException(status_code=400, detail="Token is empty")
@@ -67,17 +73,13 @@ async def check_tokens_route(
 @router.post("/refresh")
 async def refresh_tokens_route(
         response: Response,
-        access_token: str = Cookie(default=""),
-        refresh_token: str = Cookie(default=""),
+        tokens: Tokens = Depends(jwt_cookie_wrapper),
         session: AsyncSession = Depends(get_session)
 ):
     try:
         tokens = await refresh_tokens(
             session,
-            Tokens(
-                access_token=access_token,
-                refresh_token=refresh_token
-            )
+            tokens
         )
 
         update_tokens_in_cookies(response, tokens)
