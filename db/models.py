@@ -374,7 +374,16 @@ class Authorization(Base):
     __tablename__ = 'authorizations'
 
     id = Column(Integer, primary_key=True)
+    employee_id = Column(Integer, ForeignKey('employees.id'))
     access_token = Column(String)
     refresh_token = Column(String)
     created_at = Column(DateTime, default=datetime.now)
-    expired_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+
+class BotAuthorization(Base):
+    __tablename__ = 'bot_authorizations'
+
+    id = Column(Integer, primary_key=True)
+    client_id = Column(Integer, ForeignKey('clients.id'))
+    token = Column(String, unique=True)
+    created_at = Column(DateTime, default=datetime.now)
