@@ -4,11 +4,10 @@ from logging import getLogger
 
 from aiokafka import ConsumerRecord
 from pydantic import BaseModel, ValidationError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from classificator_repo import Classificator
 from crud import BotAuthRepo, TicketTypeRepo, TicketRepo
-from db import get_session
+from db import sessionmaker
 from schemas import TicketCreate
 
 logger = getLogger(__name__)
@@ -51,37 +50,36 @@ async def parse_message(message: bytes) -> Message:
 async def create_ticket(message: Message):
     logger.info(f"Create ticket with description: {message.description}")
 
-    session: AsyncSession = await get_session().__anext__()
+    async with sessionmaker() as session:
 
-    if not (bot_auth := await BotAuthRepo.get_by_token(
-        session, message.token
-    )):
-        logger.error(f"Token {message.token} not found.")
-        return
+        if not (bot_auth := await BotAuthRepo.get_by_token(
+            session, message.token
+        )):
+            logger.error(f"Token {message.token} not found.")
+            return
 
-    ticket_type_str = await Classificator.classify(message.description)
-    logger.info(f"Classificator response: {ticket_type_str}")
+        ticket_type_str = await Classificator.classify(message.description)
+        logger.info(f"Classificator response: {ticket_type_str}")
 
-    if not (ticket_type := await TicketTypeRepo.get_by_name(
-        session, ticket_type_str
-    )):
-        ticket_type = await TicketTypeRepo.create(
-            session, name=ticket_type_str
+        if not (ticket_type := await TicketTypeRepo.get_by_name(
+            session, ticket_type_str
+        )):
+            ticket_type = await TicketTypeRepo.create(
+                session, name=ticket_type_str
+            )
+            logger.info(f"Created new ticket type {ticket_type_str}.")
+
+        ticket = TicketCreate(
+            description=message.description,
+            client_id=bot_auth.client_id,
+            status_id=1,
+            type_id=ticket_type.id,
+            employee_id=1,
+            client_agreement_id=1,
         )
-        logger.info(f"Created new ticket type {ticket_type_str}.")
 
-    ticket = TicketCreate(
-        description=message.description,
-        client_id=bot_auth.client_id,
-        status_id=1,
-        type_id=ticket_type.id,
-        employee_id=1,
-        client_agreement_id=1,
-    )
+        response = await TicketRepo.create(
+            session, **ticket.model_dump()
+        )
 
-    response = await TicketRepo.create(
-        session, **ticket.model_dump()
-    )
-
-    logger.info(f"Ticket created: {response}")
-    await session.close()
+        logger.info(f"Ticket created: {response}")
