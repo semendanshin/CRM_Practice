@@ -1,6 +1,6 @@
 import pickle
 
-from utils import sign_delete, word_tokenize_pro
+from .utils import sign_delete, word_tokenize_pro
 
 from .AbstractClassifier import AbstractClassifier
 from .types import HumanReadableResponse
