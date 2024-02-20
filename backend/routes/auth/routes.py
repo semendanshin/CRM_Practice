@@ -16,19 +16,17 @@ router = APIRouter(
 @router.post("/create")
 async def create_tokens_route(
         employee_id: int,
-        received_tokens: Tokens = None,
         session: AsyncSession = Depends(get_session)
 ):
     return await create_tokens(
         session,
         employee_id,
-        received_tokens
     )
 
 
 @router.post("/check")
 async def check_tokens_route(
-        tokens: Tokens,
+        tokens: Tokens = Depends(),
         session: AsyncSession = Depends(get_session)
 ):
     try:
@@ -48,11 +46,11 @@ async def check_tokens_route(
 
 @router.post("/refresh")
 async def refresh_tokens_route(
-        tokens: Tokens,
+        tokens: Tokens = Depends(),
         session: AsyncSession = Depends(get_session)
 ):
     try:
-        return refresh_tokens(
+        return await refresh_tokens(
             session,
             tokens
         )

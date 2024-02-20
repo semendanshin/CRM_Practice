@@ -18,21 +18,24 @@ class AuthorizationRepo(
         res = await session.execute(
             cls.model.__table__.select().where(cls.model.refresh_token == refresh_token)
         )
-        return res.scalar().first()
+        inst = res.first()
+        return AuthorizationResponse.model_validate(inst) if inst else None
 
     @classmethod
-    async def get_by_user_id(cls, session: AsyncSession, user_id) -> AuthorizationResponse:
+    async def get_by_employee_id(cls, session: AsyncSession, employee_id) -> AuthorizationResponse:
         res = await session.execute(
-            cls.model.__table__.select().where(cls.model.user_id == user_id)
+            cls.model.__table__.select().where(cls.model.employee_id == employee_id)
         )
-        return res.scalar().first()
+        inst = res.first()
+        return AuthorizationResponse.model_validate(inst) if inst else None
 
     @classmethod
     async def get_by_access_token(cls, session: AsyncSession, access_token) -> AuthorizationResponse:
         res = await session.execute(
             cls.model.__table__.select().where(cls.model.access_token == access_token)
         )
-        return res.scalar().first()
+        inst = res.first()
+        return AuthorizationResponse.model_validate(inst) if inst else None
 
     @classmethod
     async def delete_by_user_id(cls, session: AsyncSession, user_id):

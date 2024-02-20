@@ -5,19 +5,18 @@ from pydantic import BaseModel, ConfigDict
 
 
 class AuthorizationUpdate(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
     access_token: Optional[str] = None
     refresh_token: Optional[str] = None
-    user_id: Optional[int] = None
 
 
 class AuthorizationCreate(AuthorizationUpdate):
+    employee_id: int
     access_token: str
     refresh_token: str
-    user_id: int
 
 
 class AuthorizationResponse(AuthorizationCreate):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
     created_at: datetime
-    expired_at: datetime
