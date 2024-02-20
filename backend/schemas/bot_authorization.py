@@ -27,3 +27,5 @@ class BotAuthorizationCreate(BotAuthorizationUpdate):
 
 class BotAuthorizationResponse(BotAuthorizationCreate):
     model_config = ConfigDict(from_attributes=True)
+
+    id: int
