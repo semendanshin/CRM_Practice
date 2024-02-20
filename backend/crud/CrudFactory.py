@@ -1,16 +1,16 @@
-from typing import TypeVar, Optional, TypeAlias, Generic, Type
+from typing import TypeVar, Type
 
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
+from sqlalchemy.orm import DeclarativeMeta
 
 Schema = TypeVar("Schema", bound=BaseModel, covariant=True)
-SQLModel = TypeVar("SQLModel", bound=declarative_base())
+SQLModel = TypeVar("SQLModel", bound=DeclarativeMeta, covariant=True)
 
 
 class AbstractRepo:
-    model: SQLModel
+    model: Type[SQLModel]
     update_schema: Type[Schema]
     create_schema: Type[Schema]
     get_schema: Type[Schema]
@@ -55,7 +55,7 @@ class AbstractRepo:
 
 
 def CrudFactory(
-        model: SQLModel,
+        model: Type[SQLModel],
         update_schema: Type[Schema],
         create_schema: Type[Schema],
         get_schema: Type[Schema],
