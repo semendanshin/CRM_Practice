@@ -25,8 +25,8 @@ def update_tokens_in_cookies(response: Response, tokens: Tokens):
 
 
 def jwt_cookie_wrapper(
-        access_token: Annotated[str, Cookie(default="")],
-        refresh_token: Annotated[str, Cookie(default="")],
+        access_token: str = Cookie(default=""),
+        refresh_token: str = Cookie(default=""),
 ):
     return Tokens(
         access_token=access_token,

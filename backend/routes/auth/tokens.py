@@ -148,7 +148,7 @@ async def check_token(session: AsyncSession,
     Check token
     :param session:
     :param received_tokens: tokens
-    :return: user id
+    :return: user
     """
     if not received_tokens:
         raise TokenEmptyException('No token provided')

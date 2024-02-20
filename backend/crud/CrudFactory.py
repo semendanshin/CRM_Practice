@@ -22,8 +22,8 @@ class AbstractRepo:
         return cls.get_schema.model_validate(obj) if obj else None
 
     @classmethod
-    async def get_all(cls, session: AsyncSession, offset: int = 0, limit: int = 100) -> list[Schema]:
-        res = await session.execute(select(cls.model).offset(offset).limit(limit))
+    async def get_all(cls, session: AsyncSession, *filters, offset: int = 0, limit: int = 100) -> list[Schema]:
+        res = await session.execute(select(cls.model).offset(offset).limit(limit).where(*filters))
         objects = res.scalars().all()
         return [cls.get_schema.model_validate(obj) for obj in objects]
 
