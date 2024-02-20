@@ -59,6 +59,7 @@ __all__ = [
     "TicketTaskRepo",
     "TicketRepo",
     "TicketTaskStatusRepo",
+    "TicketTypeRepo",
     "TMCOperationInRepo",
     "TMCOperationOutRepo",
     "TMCOperationMoveRepo",

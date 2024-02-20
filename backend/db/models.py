@@ -377,6 +377,7 @@ class Authorization(Base, AsyncAttrs):
     __tablename__ = 'authorizations'
 
     id = Column(Integer, primary_key=True)
+    employee_id = Column(Integer, ForeignKey('employees.id'))
     access_token = Column(String)
     refresh_token = Column(String)
     created_at = Column(DateTime, default=datetime.now)

@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_session
 from db.models import Client, BotAuthorization
+from schemas import ClientResponse
 
 from .exceptions import TokenEmptyException, TokenNotFoundException
 
@@ -19,7 +20,7 @@ logger = getLogger(__name__)
 
 async def check_token(
         token: str,
-        session: AsyncSession, ) -> Client:
+        session: AsyncSession, ) -> ClientResponse:
 
     if not token:
         raise TokenEmptyException

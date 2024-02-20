@@ -1,6 +1,6 @@
 import datetime
 from logging import getLogger
-from typing import Optional, Union
+from typing import Optional
 
 import jwt
 from pydantic import BaseModel
@@ -21,8 +21,8 @@ logger = getLogger(__name__)
 
 
 class Tokens(BaseModel):
-    access: str
-    refresh: str
+    access_token: str
+    refresh_token: str
 
 
 async def create_tokens(session: AsyncSession,
@@ -42,43 +42,40 @@ async def create_tokens(session: AsyncSession,
 
     try:
         user = await check_token(session, received_tokens=received_tokens)
-    except Union[TokenEmptyException, TokenNotFoundException]:
+    except (TokenEmptyException, TokenNotFoundException):
         user = await EmployeeRepo.get(session, employee_id)
-    except Union[TokenInvalidException, TokenExpiredException]:
+    except (TokenInvalidException, TokenExpiredException):
         user = await EmployeeRepo.get(session, employee_id)
         await AuthorizationRepo.delete_by_user_id(session, user.id)
 
     tokens = AuthorizationCreate(
-        access=jwt.encode(
+        access_token=jwt.encode(
             {
-                'user_id': user.id,
+                'obj': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
                                datetime.timedelta(days=config.ACCESS_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
             },
-            key=config.JWT_SECRET,
+            key=config.JWT_SECRET.get_secret_value(),
             algorithm="HS256",
         ),
-        refresh=jwt.encode(
+        refresh_token=jwt.encode(
             {
-                'user_id': user.id,
+                'obj': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
                                datetime.timedelta(days=config.REFRESH_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
             },
-            key=config.JWT_SECRET,
+            key=config.JWT_SECRET.get_secret_value(),
             algorithm="HS256",
         ),
-        user_id=user.id
+        employee_id=user.id
     )
 
-    await AuthorizationRepo.create(
+    tokens = await AuthorizationRepo.create(
         session,
-        tokens
+        **tokens.model_dump(),
     )
 
-    return Tokens(
-        access=tokens.access_token,
-        refresh=tokens.refresh_token
-    )
+    return tokens
 
 
 async def refresh_tokens(session: AsyncSession,
@@ -102,7 +99,7 @@ async def refresh_tokens(session: AsyncSession,
 
     try:
         refresh = jwt.decode(received_tokens.refresh_token,
-                             key=config.JWT_SECRET,
+                             key=config.JWT_SECRET.get_secret_value(),
                              algorithms="HS256",
                              verify=False)
     except jwt.exceptions.PyJWTError as e:
@@ -112,33 +109,37 @@ async def refresh_tokens(session: AsyncSession,
     if datetime.datetime.strptime(refresh['expires_on'], '%Y-%m-%d %H:%M:%S.%f') < datetime.datetime.utcnow():
         raise TokenExpiredException
 
-    user = await EmployeeRepo.get(session, refresh['employee_id'])
+    user = await EmployeeRepo.get(session, refresh['obj'])
 
     tokens = {
         'access': jwt.encode(
             {
-                'employee_id': user.id,
+                'obj': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
                                datetime.timedelta(days=config.ACCESS_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
             },
-            key=config.JWT_SECRET,
+            key=config.JWT_SECRET.get_secret_value(),
             algorithm="HS256",
         ),
         'refresh': jwt.encode(
             {
-                'employee_id': user.id,
+                'obj': user.id,
                 'expires_on': (datetime.datetime.utcnow() +
                                datetime.timedelta(days=config.REFRESH_EXPIRE_DAYS)).strftime('%Y-%m-%d %H:%M:%S.%f'),
             },
-            key=config.JWT_SECRET,
+            key=config.JWT_SECRET.get_secret_value(),
             algorithm="HS256",
         ),
     }
 
-    exist_token.refresh = tokens['refresh']
-    exist_token.access = tokens['access']
-    await exist_token.save()
-    return exist_token
+    tokens = await AuthorizationRepo.update(
+        session,
+        exist_token.id,
+        access_token=tokens['access'],
+        refresh_token=tokens['refresh'],
+    )
+
+    return tokens
 
 
 async def check_token(session: AsyncSession,
@@ -147,37 +148,42 @@ async def check_token(session: AsyncSession,
     Check token
     :param session:
     :param received_tokens: tokens
-    :return: user id
+    :return: user
     """
     if not received_tokens:
         raise TokenEmptyException('No token provided')
 
     try:
-        access = jwt.decode(received_tokens['access'], "redrum", algorithms="HS256", verify=False)
-        refresh = jwt.decode(received_tokens['refresh'], "redrum", algorithms="HS256", verify=False)
+        access = jwt.decode(received_tokens.access_token, config.JWT_SECRET.get_secret_value(), algorithms="HS256",
+                            verify=False)
+        refresh = jwt.decode(received_tokens.refresh_token, config.JWT_SECRET.get_secret_value(), algorithms="HS256",
+                             verify=False)
     except jwt.exceptions.PyJWTError as e:
         logger.error(f'Invalid token: {e}')
         raise TokenInvalidException('Invalid token')
 
-    user = await EmployeeRepo.get(session, access['employee_id'])
-    exist_token = await AuthorizationRepo.get_by_user_id(session, user.id)
+    user = await EmployeeRepo.get(session, access['obj'])
+    exist_token = await AuthorizationRepo.get_by_employee_id(session, user.id)
 
     if not exist_token:
         raise
 
     try:
-        exist_access = jwt.decode(exist_token.access, "redrum", algorithms="HS256", verify=False)
-        exist_refresh = jwt.decode(exist_token.refresh, "redrum", algorithms="HS256", verify=False)
+        exist_access = jwt.decode(exist_token.access_token, config.JWT_SECRET.get_secret_value(), algorithms="HS256",
+                                  verify=False)
+        exist_refresh = jwt.decode(exist_token.refresh_token, config.JWT_SECRET.get_secret_value(), algorithms="HS256",
+                                   verify=False)
     except jwt.exceptions.PyJWTError as e:
         logger.error(f'Invalid token: {e}')
         raise TokenInvalidException('Invalid token')
 
-    if access['user_id'] != refresh['user_id'] or \
-            access['user_id'] != exist_access['user_id'] or \
-            refresh['user_id'] != exist_refresh['user_id'] or \
-            access != exist_access or \
-            refresh != exist_refresh:
+    if access['obj'] != refresh['obj']:
+        logger.error('Invalid token: obj mismatch in received tokens')
         raise TokenInvalidException('Invalid token')
+    if access != exist_access:
+        logger.error('Invalid token: access token mismatch')
+    if refresh != exist_refresh:
+        logger.error('Invalid token: refresh token mismatch')
 
     if datetime.datetime.strptime(access['expires_on'], '%Y-%m-%d %H:%M:%S.%f') \
             < datetime.datetime.strptime(exist_access['expires_on'], '%Y-%m-%d %H:%M:%S.%f'

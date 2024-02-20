@@ -1,11 +1,14 @@
-from fastapi import Depends, HTTPException
+from typing import Annotated
+
+from fastapi import Depends, HTTPException, Cookie, Response
 from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from routes.auth.tokens import create_tokens, check_token, refresh_tokens, Tokens
+from config import config
+from db import get_session
 from routes.auth.exceptions import TokenEmptyException, TokenNotFoundException, TokenInvalidException, \
     TokenExpiredException
-from db import get_session
+from routes.auth.tokens import create_tokens, check_token, refresh_tokens, Tokens
 
 router = APIRouter(
     prefix="/auth",
@@ -13,22 +16,43 @@ router = APIRouter(
 )
 
 
+def update_tokens_in_cookies(response: Response, tokens: Tokens):
+    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="refresh_token")
+
+    response.set_cookie(key="access_token", value=tokens.access_token, expires=config.ACCESS_EXPIRE_DAYS * 24 * 60 * 60)
+    response.set_cookie(key="refresh_token", value=tokens.refresh_token, expires=config.REFRESH_EXPIRE_DAYS * 24 * 60 * 60)
+
+
+def jwt_cookie_wrapper(
+        access_token: str = Cookie(default=""),
+        refresh_token: str = Cookie(default=""),
+):
+    return Tokens(
+        access_token=access_token,
+        refresh_token=refresh_token
+    )
+
+
 @router.post("/create")
 async def create_tokens_route(
         employee_id: int,
-        received_tokens: Tokens = None,
-        session: AsyncSession = Depends(get_session)
+        response: Response,
+        session: AsyncSession = Depends(get_session),
 ):
-    return await create_tokens(
+    tokens = await create_tokens(
         session,
         employee_id,
-        received_tokens
     )
+
+    update_tokens_in_cookies(response, tokens)
+
+    return tokens
 
 
 @router.post("/check")
 async def check_tokens_route(
-        tokens: Tokens,
+        tokens: Tokens = Depends(jwt_cookie_wrapper),
         session: AsyncSession = Depends(get_session)
 ):
     try:
@@ -48,14 +72,20 @@ async def check_tokens_route(
 
 @router.post("/refresh")
 async def refresh_tokens_route(
-        tokens: Tokens,
+        response: Response,
+        tokens: Tokens = Depends(jwt_cookie_wrapper),
         session: AsyncSession = Depends(get_session)
 ):
     try:
-        return refresh_tokens(
+        tokens = await refresh_tokens(
             session,
             tokens
         )
+
+        update_tokens_in_cookies(response, tokens)
+
+        return tokens
+
     except TokenEmptyException:
         raise HTTPException(status_code=400, detail="Token is empty")
     except TokenNotFoundException:
