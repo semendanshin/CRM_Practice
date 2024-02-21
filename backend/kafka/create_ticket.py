@@ -5,7 +5,7 @@ from logging import getLogger
 from aiokafka import ConsumerRecord
 from pydantic import BaseModel, ValidationError
 
-from classificator_repo import Classificator
+from classificator import Classificator
 from crud import BotAuthRepo, TicketTypeRepo, TicketRepo
 from db import sessionmaker
 from schemas import TicketCreate
