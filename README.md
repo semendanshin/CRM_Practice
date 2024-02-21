@@ -12,7 +12,7 @@ ___
   <summary style="margin-left: 10px;"></summary>
     <p style="margin-left: 10px;"><i>в виде гномиков</i></p>
 </details> <br>
-<img alt="ERD" src=".github/db-diagram.png" style="width: auto; height: auto; max-width: 400px;">
+<img alt="ERD" src=".github/img/db-diagram.png" style="width: auto; height: auto; max-width: 400px;">
 
 ___
 
