@@ -1,0 +1,55 @@
+.input {
+    height: 30px !important;
+    width: 100% !important;
+    box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.25) !important;
+    border: 0.5px solid coral !important;
+    background-color: #DCDCDC !important;
+    text-indent: 10px !important;
+    flex-grow: 0 !important;
+    flex-shrink: 1 !important;
+}
+
+.button {
+    border: 1px solid black;
+    border-radius: 12px;
+    text-transform: none;
+    width: 35%;
+    height: 30px;
+    align-self: center !important;
+    justify-content: center !important;
+    font-family: Montserrat Alternates !important;
+    font-weight: 700 !important;
+}
+
+::placeholder { /* Most modern browsers support this now. */
+    font-family: Montserrat Alternates;
+}
+
+label {
+    color: #000000;
+    font-family: Montserrat Alternates !important;
+    align-self: flex-start !important;
+}
+
+.create-line {
+  width: 100%;
+  border-top: 0.15px solid coral;
+}
+
+a {
+    font-family: Montserrat Alternates;
+    font-weight: 700;
+    color: #C0C0C0;
+    text-decoration: none;
+}
+
+select{
+    height: 30px;
+    width: 100%;
+    box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.25);
+    border: 0.5px solid coral;
+    background-color: #DCDCDC;
+    text-indent: 10px;
+    flex-grow: 0;
+    flex-shrink: 1;
+}

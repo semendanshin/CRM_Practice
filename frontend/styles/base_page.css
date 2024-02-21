@@ -1,0 +1,159 @@
+body {
+    background-color: #D3D3D3;
+
+}
+
+.full-screen {
+    height: 100%;
+}
+
+label {
+    font-family: Montserrat Alternates;
+}
+
+.label-with-background, .page-name {
+    background-color: #D9D0C9;
+    border-radius: 10px;
+    border-color: #7E7A7A;
+    border-width: 1px;
+    margin-top: 10px;
+    padding-left: 10px;
+    display: inline;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+
+.page-name {
+    font-size: 200%;
+}
+
+input {
+    height: 30px;
+    max-height: 30px;
+    width: auto;
+    box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.25);
+    border: 0.5px solid coral;
+    background-color: #DCDCDC;
+    text-indent: 10px;
+    flex-shrink: 1;
+    border-radius: 10px
+}
+
+button {
+    width: 43px;
+    height: 100px;
+    color: black;
+}
+
+.index-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    position: relative;
+}
+
+
+.center-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.options-container {
+    display: flex;
+    font-family: Montserrat Alternates !important;
+    justify-content: left;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+
+img {
+    width: 20px;
+    height: 20px;
+}
+
+.one {
+    font-family: Montserrat Alternates;
+    background-color: #FFEFD5;
+    border-radius: 10px;
+}
+
+::placeholder { /* Most modern browsers support this now. */
+    font-family: Montserrat Alternates;
+}
+
+.bottom-position {
+    position: absolute !important;
+    bottom: 0 !important;
+}
+
+.option-container {
+    width: auto;
+    height: 50px;
+    display: flex;
+    font-family: Montserrat Alternates !important;
+    justify-content: left;
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: flex-start;
+
+}
+
+
+.vertical-option-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.full-width-element {
+    width: 50%;
+}
+
+
+.profile-icon {
+    display: block;
+    width: 75%;
+    height: auto;
+}
+
+.position-flag {
+    display: block;
+    width: auto;
+    height: auto;
+}
+
+.icon-text-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.evenly-spaced-container {
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-around;
+    flex-direction: row;
+}
+
+.evenly-spaced-column-container {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: auto;
+}
+
+.gap-flex-elements {
+    gap: 15px;
+}
+
+.limit-height {
+    max-height: 50%;
+}
+

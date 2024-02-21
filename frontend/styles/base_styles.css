@@ -1,0 +1,15 @@
+label {
+    font-family: Montserrat Alternates;
+}
+button {
+    width: 43px;
+    height: 100px;
+    color: black;
+}
+html *
+{
+    font-family: "Montserrat Alternates" !important;
+}
+body {
+    background-color: #D3D3D3;
+}

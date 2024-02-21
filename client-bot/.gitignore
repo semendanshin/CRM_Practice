@@ -1,0 +1,4 @@
+../.idea/
+venv/
+/database/tokens.db
+**/__pycache__/

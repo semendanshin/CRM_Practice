@@ -1,0 +1,36 @@
+body {
+    background-color: whitesmoke;
+}
+
+label {
+    font-family: Montserrat Alternates;
+    background-color: #FFEFD5;
+    border-radius: 5px;
+}
+
+.storage-container {
+    width: 30%;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: left;
+
+
+}
+
+.icon-with-link {
+    width: 30%;
+    height: 700px;
+    display: flex;
+
+}
+
+.icon {
+    width: 30%;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: left;
+}
